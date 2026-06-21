@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleet & Ledger Manager</title>
+    <style>
+        :root {
+            --bg-cream: #fbf9f4;
+            --card-bg: #ffffff;
+            --pastel-blue: #e3effd;
+            --pastel-green: #e2f4ea;
+            --pastel-red: #fce8e6;
+            --text-dark: #3c4043;
+            --text-muted: #70757a;
+            --accent-primary: #1a73e8;
+            --accent-success: #137333;
+            --accent-error: #c5221f;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-cream);
+            color: var(--text-dark);
+            padding: 15px;
+            padding-bottom: 60px;
+        }
+
+        header {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        /* Tabs Navigation */
+        .tabs {
+            display: flex;
+            background: #edeae4;
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 9px;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--card-bg);
+            color: var(--text-dark);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .view-panel {
+            display: none;
+        }
+
+        .view-panel.active {
+            display: block;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            border: 1px solid #f1eee7;
+        }
+
+        .card h2 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Keith's Quick Grid */
+        .driver-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+        }
+
+        .driver-card-btn {
+            background: var(--bg-cream);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .driver-card-btn.selected {
+            background: var(--pastel-blue);
+            border-color: var(--accent-primary);
+        }
+
+        .driver-card-btn .name {
+            font-weight: bold;
+            display: block;
+            font-size: 1.1rem;
+        }
+
+        .driver-card-btn .plate {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            display: block;
+        }
+
+        /* Number/Amount Pad */
+        .amount-presets {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .preset-btn {
+            background: #f1f3f4;
+            border: none;
+            padding: 14px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .preset-btn:active, .driver-card-btn:active {
+            transform: scale(0.97);
+        }
+
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            font-size: 1.1rem;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background: #fafafa;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(26, 115, 232, 0.2);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            box-shadow: none;
+        }
+
+        /* Table Styling for Joyce */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #edeae4;
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .balance-bad {
+            color: var(--accent-error);
+            font-weight: bold;
+            background: var(--pastel-red);
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .balance-good {
+            color: var(--accent-success);
+            font-weight: bold;
+            background: var(--pastel-green);
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        /* Activity Feed Timeline */
+        .timeline {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .timeline-item {
+            padding: 10px 0;
+            border-bottom: 1px dashed #edeae4;
+            font-size: 0.85rem;
+        }
+
+        .timeline-item:last-child {
+            border: none;
+        }
+
+        .timeline-meta {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            margin-bottom: 2px;
+        }
+
+        /* Loading Overlay */
+        #loading {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(251, 249, 244, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            z-index: 1000;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loading">Syncing with Live Database...</div>
+
+    <header>
+        <h1>🚕 Fleet Ledger Hub</h1>
+    </header>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('keith')">📱 Keith's Entry</button>
+        <button class="tab-btn" onclick="switchTab('joyce')">📊 Joyce's Ledger</button>
+    </div>
+
+    <div id="panel-keith" class="view-panel active">
+        <div class="card">
+            <h2>Step 1: Tap Driver</h2>
+            <div class="driver-grid" id="keith-driver-grid">
+                </div>
+        </div>
+
+        <div class="card">
+            <h2>Step 2: Collect Amount</h2>
+            <div class="amount-presets">
+                <button class="preset-btn" onclick="setAmount(100)">$100</button>
+                <button class="preset-btn" onclick="setAmount(200)">$200</button>
+                <button class="preset-btn" onclick="setAmount(350)">$350</button>
+            </div>
+            <input type="number" id="custom-amount" placeholder="Or enter exact cash amount ($)">
+            <input type="text" id="log-notes" placeholder="Optional notes (e.g., partial payment)">
+            
+            <button class="submit-btn" id="submit-log-btn" onclick="submitLog('Keith')" disabled>Log Payment Instantly</button>
+        </div>
+    </div>
+
+    <div id="panel-joyce" class="view-panel">
+        <div class="card">
+            <h2>Live Driver Balances</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Driver</th>
+                            <th>Vehicle</th>
+                            <th>Current Owed Balance</th>
+                            <th>Weekly Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody id="joyce-table-body">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Real-Time Frontline Feed</h2>
+            <div class="timeline" id="activity-timeline">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        // HOOKED UP TO YOUR LIVE DEPLOYED GOOGLE APPS SCRIPT
+        const API_URL = "https://script.google.com/macros/s/AKfycbz9fg57riere7j2j2afcwSe4-Vk5Ui6Y5JIDwSCCobeJQ3ns0Lcb5cE3NVb78_4cFHGsg/exec";
+
+        let appData = { drivers: [], logs: [] };
+        let selectedDriverId = null;
+
+        window.addEventListener('load', fetchDatabase);
+
+        function switchTab(user) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+            
+            if(user === 'keith') {
+                document.querySelector('.tabs .tab-btn:nth-child(1)').classList.add('active');
+                document.getElementById('panel-keith').classList.add('active');
+            } else {
+                document.querySelector('.tabs .tab-btn:nth-child(2)').classList.add('active');
+                document.getElementById('panel-joyce').classList.add('active');
+            }
+        }
+
+        async function fetchDatabase() {
+            document.getElementById('loading').style.display = 'flex';
+            try {
+                const response = await fetch(API_URL);
+                appData = await response.json();
+                renderUI();
+            } catch (error) {
+                alert("Database Sync Failed. Make sure your Google Sheet contains 'Drivers' and 'Logs' tabs with matching header fields.");
+                console.error(error);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function renderUI() {
+            // 1. Build Keith's One-Tap Grid
+            const grid = document.getElementById('keith-driver-grid');
+            grid.innerHTML = '';
+            appData.drivers.forEach(drv => {
+                const btn = document.createElement('button');
+                btn.className = `driver-card-btn ${selectedDriverId === drv.driver_id ? 'selected' : ''}`;
+                btn.onclick = () => selectDriver(drv.driver_id);
+                btn.innerHTML = `<span class="name">${drv.name}</span><span class="plate">${drv.plate || 'No Car'}</span>`;
+                grid.appendChild(btn);
+            });
+
+            // 2. Build Joyce's Master Ledger Table
+            const tbody = document.getElementById('joyce-table-body');
+            tbody.innerHTML = '';
+            appData.drivers.forEach(drv => {
+                let currentBalance = parseFloat(drv.opening_balance || 0);
+                
+                // Track matching log lines out of backend rows
+                const payments = appData.logs.filter(l => l.driver_id === drv.driver_id);
+                payments.forEach(p => currentBalance -= parseFloat(p.amount || 0));
+
+                const balanceClass = currentBalance > 0 ? 'balance-bad' : 'balance-good';
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${drv.name}</strong><br><small style="color:gray">${drv.driver_id}</small></td>
+                    <td>${drv.plate || '—'}</td>
+                    <td><span class="${balanceClass}">$${currentBalance.toFixed(2)}</span></td>
+                    <td>$${parseFloat(drv.weekly_rate || 0).toFixed(2)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // 3. Render Activity Feed Timeline
+            const timeline = document.getElementById('activity-timeline');
+            timeline.innerHTML = '';
+            if(appData.logs.length === 0) {
+                timeline.innerHTML = '<div class="timeline-item" style="color:gray">No recent entry records found.</div>';
+            } else {
+                [...appData.logs].reverse().forEach(log => {
+                    const item = document.createElement('div');
+                    item.className = 'timeline-item';
+                    const dateStr = log.timestamp ? new Date(log.timestamp).toLocaleString() : 'Just Now';
+                    const driverObj = appData.drivers.find(d => d.driver_id === log.driver_id);
+                    const driverName = driverObj ? driverObj.name : log.driver_id;
+                    
+                    item.innerHTML = `
+                        <div class="timeline-meta">⏱️ ${dateStr} | Logged by ${log.action_by || 'App'}</div>
+                        <div><strong>${driverName}</strong> handed over <span style="color:var(--accent-success);font-weight:bold">$${log.amount}</span> cash. ${log.notes ? `<i>("${log.notes}")</i>` : ''}</div>
+                    `;
+                    timeline.appendChild(item);
+                });
+            }
+        }
+
+        function selectDriver(id) {
+            selectedDriverId = id;
+            document.querySelectorAll('.driver-card-btn').forEach(btn => btn.classList.remove('selected'));
+            renderUI();
+            checkValidation();
+        }
+
+        function setAmount(val) {
+            document.getElementById('custom-amount').value = val;
+            checkValidation();
+        }
+
+        document.getElementById('custom-amount').addEventListener('input', checkValidation);
+
+        function checkValidation() {
+            const amt = document.getElementById('custom-amount').value;
+            const btn = document.getElementById('submit-log-btn');
+            if (selectedDriverId && amt && parseFloat(amt) > 0) {
+                btn.disabled = false;
+            } else {
+                btn.disabled = true;
+            }
+        }
+
+        async function submitLog(userInitiated) {
+            const amount = document.getElementById('custom-amount').value;
+            const notes = document.getElementById('log-notes').value;
+
+            const payload = {
+                action: "logPayment",
+                driverId: selectedDriverId,
+                amount: parseFloat(amount),
+                actionBy: userInitiated,
+                notes: notes
+            };
+
+            document.getElementById('loading').style.display = 'flex';
+
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+
+                document.getElementById('custom-amount').value = '';
+                document.getElementById('log-notes').value = '';
+                selectedDriverId = null;
+                
+                await fetchDatabase();
+                switchTab('joyce'); 
+            } catch (err) {
+                alert("Submission failed. The entry was not saved.");
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
