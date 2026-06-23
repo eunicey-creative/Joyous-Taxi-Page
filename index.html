@@ -1,9 +1,13 @@
+{
+type: uploaded file
+fileName: taxi trial v6.0.0_cloud.html
+fullContent:
 <!DOCTYPE html>
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>香港的士租賃管理系統 v5.9.3 (雲端同步+手機點擊雙向修復版)</title>
+    <title>香港的士租賃管理系統 v6.0.0 (雲端雙機即時對齊版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #fcfcfc; -webkit-font-smoothing: antialiased; }
@@ -19,12 +23,16 @@
         
         <div class="w-64 bg-white border-r border-gray-200 p-6 flex flex-col justify-between shrink-0 min-h-screen shadow-sm">
             <div>
-                <div class="flex items-center gap-3 mb-8">
-                    <span class="text-2xl text-red-600">🚖</span>
-                    <div>
+                <div class="flex flex-col gap-2 mb-8">
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl text-red-600">𚖖</span>
                         <h1 class="font-bold text-xl text-gray-900 tracking-wider">的士營運管理</h1>
-                        <div id="cloud-sync-status" class="text-[10px] font-bold text-gray-400 mt-0.5">🌐 本地暫存模式</div>
-                        <button id="cloud-refresh-btn" onclick="downloadFromCloud()" class="hidden text-[10px] text-blue-600 underline font-semibold text-left block hover:text-blue-800 mt-0.5">🔄 手動重新載入雲端數據</button>
+                    </div>
+                    <div class="mt-2">
+                        <span id="sync-status-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-500">
+                            <span id="sync-status-dot" class="w-2 h-2 rounded-full bg-gray-400"></span>
+                            <span id="sync-status-text">本地暫存模式</span>
+                        </span>
                     </div>
                 </div>
                 <nav class="space-y-1">
@@ -32,13 +40,13 @@
                     <button onclick="switchTab('fleet')" data-tab="fleet" class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm text-gray-600 hover:bg-gray-50 transition block">🚗 車隊資產與車主</button>
                     <button onclick="switchTab('maintenance')" data-tab="maintenance" class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm text-gray-600 hover:bg-gray-50 transition block">🔧 維修、年檢及扣租</button>
                     <button onclick="switchTab('drivers')" data-tab="drivers" class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm text-gray-600 hover:bg-gray-50 transition block">👥 司機名冊與安全檔案</button>
-                    <button onclick="switchTab('scheduler')" data-tab="scheduler" class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm text-gray-600 hover:bg-gray-50 transition block">📅 拖放排班與手機點擊</button>
+                    <button onclick="switchTab('scheduler')" data-tab="scheduler" class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm text-gray-600 hover:bg-gray-50 transition block">📅 拖放排班與天氣控制</button>
                     <button onclick="switchTab('tunnel-upload')" data-tab="tunnel-upload" class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm text-gray-600 hover:bg-gray-50 transition block">🚇 隧道費批量配對</button>
                     <div class="pt-4 border-t border-gray-100 my-2"></div>
                     <button onclick="switchTab('manager-input')" data-tab="manager-input" class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm text-gray-600 hover:bg-gray-50 transition block">📝 Keith 流水登記</button>
                     <button onclick="switchTab('accounting-ledger')" data-tab="accounting-ledger" class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm text-gray-600 hover:bg-gray-50 transition block">🏦 Joyce 會計與矩陣表</button>
                     <div class="pt-4 border-t border-gray-100 my-2"></div>
-                    <button onclick="switchTab('system-data')" data-tab="system-data" class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm text-red-600 hover:bg-red-50 transition block">💾 JSON 備份與轉移庫</button>
+                    <button onclick="switchTab('system-data')" data-tab="system-data" class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm text-red-600 hover:bg-red-50 transition block">💾 雲端同步與系統數據庫</button>
                 </nav>
             </div>
             <div class="text-xs text-gray-400 font-medium pt-4">今天日期: 2026-06-18</div>
@@ -224,9 +232,6 @@
             </div>
 
             <div id="tab-scheduler" class="tab-content hidden space-y-6">
-                <div class="bg-red-50 p-3 rounded-lg border border-red-200 text-xs text-red-800 font-medium">
-                    📱 <strong>手機排班密技：</strong>先點右邊名冊任意司機（會亮紅框），再點左邊車輛的「日更」或「夜更」空格，即可直接塞入！無需拖拽。
-                </div>
                 <div class="flex flex-wrap gap-4 items-center justify-between border p-4 rounded-xl bg-gray-50">
                     <div class="flex gap-3 items-center">
                         <label class="text-sm font-bold text-gray-700">切換排班日期：</label>
@@ -329,7 +334,18 @@
             </div>
 
             <div id="tab-system-data" class="tab-content hidden space-y-6">
-                <div><h2 class="text-2xl font-bold text-gray-900">💾 JSON 系統數據備份與安全轉移庫</h2></div>
+                <div><h2 class="text-2xl font-bold text-gray-900">💾 雲端即時同步與系統數據庫</h2></div>
+                
+                <div class="border-2 border-red-100 p-6 rounded-xl bg-red-50/10 space-y-3">
+                    <h3 class="font-bold text-gray-900 flex items-center gap-2">🌐 Google Sheets 雙機雲端串接設定</h3>
+                    <p class="text-xs text-gray-500">請在下方填入你的 Google Apps Script Web App 部署網址。設定完成後，Keith 與 Joyce 將實現跨裝置即時共同編輯。</p>
+                    <div class="flex gap-2">
+                        <input type="text" id="cloud-script-url-input" placeholder="https://script.google.com/macros/s/XXXXX/exec" class="flex-1 border rounded-lg px-3 py-2 text-xs font-mono bg-white">
+                        <button onclick="saveCloudUrlConfig()" class="bg-red-600 text-white font-bold text-xs px-4 py-2 rounded-lg hover:bg-red-700 transition shrink-0">儲存端點設定</button>
+                    </div>
+                    <div class="text-[11px] text-gray-400">目前雲端快取最後載入時間: <span id="cloud-last-sync-time-label" class="font-mono">無</span></div>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="border p-6 rounded-xl bg-white space-y-3">
                         <h3 class="font-bold text-gray-900">📤 導出 JSON 備份</h3>
@@ -347,74 +363,58 @@
         </div>
     </div>
 
-    <script>
-        // =========================================================================
-        // 🌐 【重要設定】請在此處貼上你的 Google Apps Script 網頁應用程式 URL
-        // =========================================================================
-        const BACKEND_URL = "請在此處貼上你的_GOOGLE_APPS_SCRIPT_網頁應用程式_URL";
+    <div id="sync-conflict-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 antialiased">
+        <div class="bg-white max-w-md w-full rounded-2xl p-6 border-2 border-red-600 shadow-2xl space-y-4">
+            <div class="flex items-center gap-3 text-red-600">
+                <span class="text-3xl">⚠️</span>
+                <h3 class="font-bold text-lg text-gray-900">偵測到數據衝突（雙方同時修改）</h3>
+            </div>
+            <p class="text-xs text-gray-600 leading-relaxed">
+                系統發現其他裝置（例如另一方的瀏覽器）在更晚的時間點更新了雲端數據。為了防止資料覆蓋，本地寫入請求已被安全拒絕。
+            </p>
+            <div class="bg-red-50 text-red-800 p-3 rounded-lg text-xs font-medium">
+                系統正自動下載最新的雲端數據，請重新輸入剛才的變更。
+            </p>
+            <div class="text-right">
+                <button onclick="dismissConflictModal()" class="bg-gray-900 hover:bg-gray-800 text-white font-bold text-xs px-4 py-2 rounded-lg transition">我明白了 (自動重新對齊)</button>
+            </div>
+        </div>
+    </div>
 
+    <script>
+        // Core Logic Application State
         let state = { 
             cars: [], drivers: [], shifts: [], tunnels: [], payments: [], 
             ownerExpenses: [], maintenances: [], ownerPayoutVerification: {}, 
             accidents: {}, weather: {} 
         };
         let currentActiveDriverId = null;
-        let selectedDriverForMobile = null; // 手機點擊選中司機暫存
         const TODAY_STR = "2026-06-18";
 
-        // 雲端同步狀態更新
-        function updateSyncStatus(text, colorClass) {
-            const el = document.getElementById('cloud-sync-status');
-            if (el) {
-                el.innerText = text;
-                el.className = `text-[10px] font-bold mt-0.5 ${colorClass}`;
-            }
-        }
+        // ==========================================
+        // 🚀 雲端同步引擎核心變數 (Cloud Sync Engine)
+        // ==========================================
+        let GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyKQzkmxu_jHOymCjoSpAsrOM87VDlkgQ9u7GTx3FLM83iTKrO5GdovBOwzNNETNX88kw/exec"; // 可在此寫入預設 URL，或直接在網頁設定分頁輸入
+        let _lastSyncedTimestamp = new Date(0).toISOString(); 
+        let _isSyncing = false;
+        let _syncHeartbeatInterval = null;
 
-        // 🌐 從雲端載入數據 (GET)
-        async function downloadFromCloud() {
-            if (!BACKEND_URL || BACKEND_URL.includes("請在此處貼上")) return;
-            updateSyncStatus("⏳ 正在讀取雲端...", "text-amber-500");
-            try {
-                const response = await fetch(BACKEND_URL + "?action=load");
-                if (!response.ok) throw new Error("網路錯誤");
-                const cloudState = await response.json();
-                if (cloudState && typeof cloudState === 'object') {
-                    state = cloudState;
-                    localStorage.setItem('hk_taxi_v5_state', JSON.stringify(state));
-                    updateSelectors();
-                    renderAll();
-                    if(document.getElementById('scheduler-date-focus')?.value) loadSchedulerBoard();
-                    updateSyncStatus("✅ 雲端載入成功", "text-emerald-600");
-                }
-            } catch (e) {
-                console.error("雲端載入失敗:", e);
-                updateSyncStatus("❌ 載入失敗 (改用本地緩存)", "text-red-500");
-            }
-        }
-
-        // 🌐 上傳數據至雲端 (POST)
-        async function uploadToCloud() {
-            if (!BACKEND_URL || BACKEND_URL.includes("請在此處貼上")) return;
-            updateSyncStatus("⏳ 雲端同步中...", "text-amber-500");
-            try {
-                // 採用 no-cors 安全跨域傳輸
-                await fetch(BACKEND_URL, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ action: "save", state: state })
-                });
-                updateSyncStatus("✅ 雲端已同步", "text-emerald-600");
-            } catch (e) {
-                console.error("雲端上傳失敗:", e);
-                updateSyncStatus("❌ 雲端同步失敗", "text-red-500");
-            }
-        }
-
+        // 防禦型安全加載函數：防止任何損壞的舊緩存數據導致腳本崩潰
         function hydrateState() {
             try {
+                // 優先讀取雲端 URL 配置
+                const savedUrl = localStorage.getItem('hk_taxi_cloud_url');
+                if (savedUrl) {
+                    GOOGLE_SCRIPT_URL = savedUrl;
+                    if(document.getElementById('cloud-script-url-input')) {
+                        document.getElementById('cloud-script-url-input').value = savedUrl;
+                    }
+                }
+
                 const saved = localStorage.getItem('hk_taxi_v5_state');
+                const savedTimestamp = localStorage.getItem('hk_taxi_v5_sync_time');
+                if (savedTimestamp) _lastSyncedTimestamp = savedTimestamp;
+
                 if (saved) {
                     let parsed = JSON.parse(saved) || {};
                     state = {
@@ -433,18 +433,160 @@
             } catch(e) { console.error("Hydration Error:", e); }
         }
 
-        function saveState() {
-            try { localStorage.setItem('hk_taxi_v5_state', JSON.stringify(state)); } catch(e) {}
+        // 修改後高槓桿的核心架構：所有增刪改動作最終都會呼叫 saveState()。
+        // 我們直接在此注入 pushToCloud 雲端同步發送點
+        function saveState(skipCloudPush = false) {
+            try { 
+                localStorage.setItem('hk_taxi_v5_state', JSON.stringify(state)); 
+                localStorage.setItem('hk_taxi_v5_sync_time', _lastSyncedTimestamp);
+            } catch(e) {}
+            
             updateSelectors();
             renderAll();
-            uploadToCloud(); // 任何數據變動均自動觸發雲端上傳
+
+            // 如果有設定雲端網址且未註明跳過，觸發高頻同步寫入
+            if (GOOGLE_SCRIPT_URL && !skipCloudPush) {
+                pushToCloud();
+            }
         }
 
+        function saveCloudUrlConfig() {
+            const urlInput = document.getElementById('cloud-script-url-input');
+            if (urlInput) {
+                const targetUrl = urlInput.value.trim();
+                localStorage.setItem('hk_taxi_cloud_url', targetUrl);
+                GOOGLE_SCRIPT_URL = targetUrl;
+                alert("🌐 雲端點對點 URL 儲存成功！系統正為你執行首次雲端同步抓取...");
+                fetchFromCloud();
+            }
+        }
+
+        // 更新左邊欄狀態信號燈的函數
+        function updateSyncBadge(status) {
+            const badge = document.getElementById('sync-status-badge');
+            const dot = document.getElementById('sync-status-dot');
+            const txt = document.getElementById('sync-status-text');
+            if (!badge || !dot || !txt) return;
+
+            if (!GOOGLE_SCRIPT_URL) {
+                badge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-500";
+                dot.className = "w-2 h-2 rounded-full bg-gray-400";
+                txt.innerText = "本地暫存模式";
+                return;
+            }
+
+            switch(status) {
+                case 'synced':
+                    badge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200";
+                    dot.className = "w-2 h-2 rounded-full bg-emerald-500";
+                    txt.innerText = "雲端連線中 (Synced)";
+                    break;
+                case 'syncing':
+                    badge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200";
+                    dot.className = "w-2 h-2 rounded-full bg-amber-400 animate-pulse";
+                    txt.innerText = "正在同步...";
+                    break;
+                case 'error':
+                    badge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-200";
+                    dot.className = "w-2 h-2 rounded-full bg-red-500";
+                    txt.innerText = "雲端連線失敗 (Offline)";
+                    break;
+            }
+        }
+
+        // ==========================================
+        // 核心同步方法 API Layer
+        // ==========================================
+        async function fetchFromCloud() {
+            if (!GOOGLE_SCRIPT_URL || _isSyncing) return;
+            _isSyncing = true;
+            updateSyncBadge('syncing');
+
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, { method: 'GET', mode: 'cors' });
+                const resData = await response.json();
+                
+                if (resData && resData.timestamp) {
+                    const serverTime = new Date(resData.timestamp);
+                    const localTime = new Date(_lastSyncedTimestamp);
+
+                    // 只有當伺服器時間大於本地同步點時，才進行覆蓋覆核
+                    if (serverTime > localTime && resData.state) {
+                        state = resData.state;
+                        _lastSyncedTimestamp = resData.timestamp;
+                        // 帶入 localstorage，並跳過 push 防止無限迴圈
+                        saveState(true);
+                        const label = document.getElementById('cloud-last-sync-time-label');
+                        if (label) label.innerText = new Date(_lastSyncedTimestamp).toLocaleString();
+                    }
+                    updateSyncBadge('synced');
+                }
+            } catch (err) {
+                console.error("Cloud Fetch Failed:", err);
+                updateSyncBadge('error');
+            } finally {
+                _isSyncing = false;
+            }
+        }
+
+        async function pushToCloud() {
+            if (!GOOGLE_SCRIPT_URL || _isSyncing) return;
+            _isSyncing = true;
+            updateSyncBadge('syncing');
+
+            const currentClientTimestamp = new Date().toISOString();
+            const payload = {
+                state: state,
+                timestamp: currentClientTimestamp,
+                baseTimestamp: _lastSyncedTimestamp
+            };
+
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    body: JSON.stringify(payload)
+                });
+                const resData = await response.json();
+
+                if (resData.status === "success") {
+                    _lastSyncedTimestamp = resData.timestamp;
+                    localStorage.setItem('hk_taxi_v5_sync_time', _lastSyncedTimestamp);
+                    const label = document.getElementById('cloud-last-sync-time-label');
+                    if (label) label.innerText = new Date(_lastSyncedTimestamp).toLocaleString();
+                    updateSyncBadge('synced');
+                } else if (resData.status === "conflict") {
+                    // 核心要求：顯示衝突 Modal 並直接執行對齊下載
+                    document.getElementById('sync-conflict-modal').classList.remove('hidden');
+                    if (resData.serverData) {
+                        state = resData.serverData;
+                        _lastSyncedTimestamp = resData.serverTimestamp || currentClientTimestamp;
+                        saveState(true); 
+                    }
+                    updateSyncBadge('synced');
+                } else {
+                    updateSyncBadge('error');
+                }
+            } catch (err) {
+                console.error("Cloud Push Failed:", err);
+                updateSyncBadge('error');
+            } finally {
+                _isSyncing = false;
+            }
+        }
+
+        function dismissConflictModal() {
+            document.getElementById('sync-conflict-modal').classList.add('hidden');
+        }
+
+        // ==========================================
+        // 原生業務邏輯與介面操作函數 (保持完美相容性)
+        // ==========================================
         function exportSystemData() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `Taxi_System_v5.9.3.json`);
+            downloadAnchor.setAttribute("download", `Taxi_System_v6.0.0.json`);
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click(); downloadAnchor.remove();
         }
@@ -457,14 +599,22 @@
                 try {
                     const parsed = JSON.parse(e.target.result);
                     if (parsed && typeof parsed === 'object') {
-                        state = parsed; saveState(); alert("🎉 數據還原成功！");
+                        state = parsed; saveState(); alert("🎉 數據還原成功並已排程推播至雲端！");
                     }
                 } catch(err) { alert("讀取錯誤。"); }
             };
             reader.readAsText(fileInput.files[0]);
         }
 
-        function forceResetSystem() { if(confirm("確定要重置並清空全部數據嗎？")) { localStorage.removeItem('hk_taxi_v5_state'); location.reload(); } }
+        function forceResetSystem() { 
+            if(confirm("確定要重置並清空全部數據嗎？雲端與本地將同步清空。")) { 
+                localStorage.removeItem('hk_taxi_v5_state'); 
+                localStorage.removeItem('hk_taxi_v5_sync_time');
+                state = { cars: [], drivers: [], shifts: [], tunnels: [], payments: [], ownerExpenses: [], maintenances: [], ownerPayoutVerification: {}, accidents: {}, weather: {} };
+                saveState();
+                location.reload(); 
+            } 
+        }
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -480,7 +630,6 @@
             if(tabId === 'scheduler') { 
                 const focusEl = document.getElementById('scheduler-date-focus');
                 if(focusEl && !focusEl.value) focusEl.value = TODAY_STR; 
-                selectedDriverForMobile = null; // 切換分頁時重置手機點擊狀態
                 loadSchedulerBoard(); 
             }
         }
@@ -549,7 +698,7 @@
                 : `<li class="text-gray-400 italic">無紀錄</li>`;
         }
         function closeDriverDetail() { document.getElementById('driver-detail-card').classList.add('hidden'); currentActiveDriverId = null; }
-        function saveDriverAccidentRecord() { if(currentActiveDriverId) { state.accidents[currentActiveDriverId] = document.getElementById('detail-accidents-text').value; localStorage.setItem('hk_taxi_v5_state', JSON.stringify(state)); } }
+        function saveDriverAccidentRecord() { if(currentActiveDriverId) { state.accidents[currentActiveDriverId] = document.getElementById('detail-accidents-text').value; localStorage.setItem('hk_taxi_v5_state', JSON.stringify(state)); if(GOOGLE_SCRIPT_URL) pushToCloud(); } }
 
         function triggerExtremeWeather(shiftType) {
             const tgtDate = document.getElementById('scheduler-date-focus').value; if(!tgtDate) return;
@@ -568,41 +717,12 @@
             saveState(); loadSchedulerBoard();
         }
 
-        // ======================== 排班操作 (支援 拖拽 + 手機點擊 雙核心) ========================
-        
-        // 核心1：電腦用拖拽
         function handleDragStart(e, name) { e.dataTransfer.setData("text/plain", name); }
         function handleDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-target'); }
         function handleDragLeave(e) { e.currentTarget.classList.remove('drag-target'); }
         function handleDropShift(e, plate, shiftType) {
             e.preventDefault(); e.currentTarget.classList.remove('drag-target');
             const driverName = e.dataTransfer.getData("text/plain"); if (!driverName) return;
-            executeShiftAssignment(plate, shiftType, driverName);
-        }
-
-        // 核心2：手機觸控點擊選取司機
-        function selectDriverMobile(name, id) {
-            document.querySelectorAll('.driver-pool-item').forEach(el => {
-                el.classList.remove('border-red-600', 'bg-red-50', 'ring-2', 'ring-red-400');
-            });
-            if (selectedDriverForMobile === name) {
-                selectedDriverForMobile = null; // 再點一次取消選取
-            } else {
-                selectedDriverForMobile = name;
-                const activeEl = document.getElementById(`driver-item-${id}`);
-                if (activeEl) activeEl.classList.add('border-red-600', 'bg-red-50', 'ring-2', 'ring-red-400');
-            }
-        }
-
-        // 手機點擊更份格子，直接將選中的司機填入
-        function handleShiftClickMobile(plate, shiftType) {
-            if (!selectedDriverForMobile) return; // 如果沒預先點擊司機，不做事，允許正常點擊
-            executeShiftAssignment(plate, shiftType, selectedDriverForMobile);
-            selectedDriverForMobile = null; // 排班完成後自動釋放選取狀態
-        }
-
-        // 共通排班底層邏輯
-        function executeShiftAssignment(plate, shiftType, driverName) {
             const tgtDate = document.getElementById('scheduler-date-focus').value;
             state.shifts = state.shifts.filter(s => !(s.date === tgtDate && s.carPlate === plate && s.type === shiftType));
             const driverObj = state.drivers.find(d => d.name === driverName);
@@ -616,8 +736,7 @@
             saveState(); loadSchedulerBoard();
         }
 
-        function clearShift(plate, shiftType, event) {
-            if(event) event.stopPropagation(); // 阻止氣泡事件避免觸發手機點擊排班
+        function clearShift(plate, shiftType) {
             const tgtDate = document.getElementById('scheduler-date-focus').value;
             state.shifts = state.shifts.filter(s => !(s.date === tgtDate && s.carPlate === plate && s.type === shiftType));
             saveState(); loadSchedulerBoard();
@@ -636,18 +755,18 @@
                     return `
                         <div class="border border-gray-200 p-4 rounded-xl bg-gray-50/30 shadow-sm">
                             <div class="font-mono font-bold text-xs flex justify-between border-b pb-1"><span>🚗 ${c.plate}</span><span class="text-gray-400 font-normal">車主: ${c.owner}</span></div>
-                            <div onclick="handleShiftClickMobile('${c.plate}', 'Day')" class="p-2 bg-amber-50 rounded mt-2 border border-transparent cursor-pointer hover:border-amber-300 transition" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDropShift(event, '${c.plate}', 'Day')">
+                            <div class="p-2 bg-amber-50 rounded mt-2 border border-transparent" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDropShift(event, '${c.plate}', 'Day')">
                                 <span class="text-[10px] text-amber-700 font-bold block">☀️ 日更：</span>
                                 <div class="text-xs font-bold flex justify-between items-center h-6">
-                                    <span class="${dayShift?.driverName.includes('天氣')?'text-slate-500':''}">${dayShift ? '👤 ' + dayShift.driverName : '<span class="text-gray-400 font-normal">[點擊/拖放司機]</span>'}</span>
-                                    ${dayShift ? `<button type="button" onclick="clearShift('${c.plate}', 'Day', event)" class="text-red-500 font-bold text-[10px] bg-white px-1 border rounded shadow-sm">清空</button>` : ''}
+                                    <span class="${dayShift?.driverName.includes('天氣')?'text-slate-500':''}">${dayShift ? '👤 ' + dayShift.driverName : '<span class="text-gray-400 font-normal">[拖放司機]</span>'}</span>
+                                    ${dayShift ? `<button type="button" onclick="clearShift('${c.plate}', 'Day')" class="text-red-500 font-bold text-[10px]">清空</button>` : ''}
                                 </div>
                             </div>
-                            <div onclick="handleShiftClickMobile('${c.plate}', 'Night')" class="p-2 bg-indigo-50 rounded mt-2 border border-transparent cursor-pointer hover:border-indigo-300 transition" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDropShift(event, '${c.plate}', 'Night')">
+                            <div class="p-2 bg-indigo-50 rounded mt-2 border border-transparent" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDropShift(event, '${c.plate}', 'Night')">
                                 <span class="text-[10px] text-indigo-700 font-bold block">🌙 夜更：</span>
                                 <div class="text-xs font-bold flex justify-between items-center h-6">
-                                    <span class="${nightShift?.driverName.includes('天氣')?'text-slate-500':''}">${nightShift ? '👤 ' + nightShift.driverName : '<span class="text-gray-400 font-normal">[點擊/拖放司機]</span>'}</span>
-                                    ${nightShift ? `<button type="button" onclick="clearShift('${c.plate}', 'Night', event)" class="text-red-500 font-bold text-[10px] bg-white px-1 border rounded shadow-sm">清空</button>` : ''}
+                                    <span class="${nightShift?.driverName.includes('天氣')?'text-slate-500':''}">${nightShift ? '👤 ' + nightShift.driverName : '<span class="text-gray-400 font-normal">[拖放司機]</span>'}</span>
+                                    ${nightShift ? `<button type="button" onclick="clearShift('${c.plate}', 'Night')" class="text-red-500 font-bold text-[10px]">清空</button>` : ''}
                                 </div>
                             </div>
                         </div>`;
@@ -658,13 +777,10 @@
             if(pool) {
                 pool.innerHTML = state.drivers.map(d => {
                     if (bookedDriversToday.includes(d.name)) return ''; 
-                    // 如果目前正在被手機模式高亮選中，維持其紅框樣式
-                    const isSelected = (selectedDriverForMobile === d.name);
-                    const borderStyle = isSelected ? 'border-red-600 bg-red-50 ring-2 ring-red-400' : 'border-gray-200 bg-white';
                     return `
-                        <div id="driver-item-${d.id}" draggable="true" ondragstart="handleDragStart(event, '${d.name}')" onclick="selectDriverMobile('${d.name}', ${d.id})" class="driver-pool-item p-3 border rounded-lg text-xs font-bold shadow-sm cursor-pointer hover:bg-red-50 hover:border-red-300 transition flex justify-between items-center ${borderStyle}">
+                        <div draggable="true" ondragstart="handleDragStart(event, '${d.name}')" class="p-3 border border-gray-200 rounded-lg bg-white text-xs font-bold shadow-sm cursor-move hover:bg-red-50 hover:border-red-300 transition flex justify-between items-center">
                             <span>👤 ${d.name} <span class="text-[10px] font-normal text-gray-400">(${d.shiftPref})</span></span>
-                            <span class="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-500 select-none">點擊/拖動</span>
+                            <span class="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-500">::: 拖動</span>
                         </div>`;
                 }).join('');
             }
@@ -929,18 +1045,40 @@
             tbody.innerHTML = html;
         }
 
-        window.onload = async () => { 
+        // ==========================================
+        // 🔄 雙機即時自動化觸發器 (Live-Update Hooks)
+        // ==========================================
+        function setupLiveUpdateTriggers() {
+            // 1️⃣ Polling 心跳迴圈：每隔 30 秒自動向雲端同步拉取最新變更
+            _syncHeartbeatInterval = setInterval(() => {
+                fetchFromCloud();
+            }, 30000);
+
+            // 2️⃣ 視窗焦點與可見性改變觸發器：只要 Keith 或 Joyce 切換分頁或點回視窗，立即執行精準同步
+            window.addEventListener('focus', () => {
+                fetchFromCloud();
+            });
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') {
+                    fetchFromCloud();
+                }
+            });
+        }
+
+        window.onload = () => { 
             hydrateState(); 
             updateSelectors(); 
             renderAll(); 
+            updateSyncBadge();
+            setupLiveUpdateTriggers();
             switchTab('dashboard'); 
             
-            // 如果填寫了網址，初始化時強制從雲端拉取最新資料庫
-            if (BACKEND_URL && !BACKEND_URL.includes("請在此處貼上")) {
-                document.getElementById('cloud-refresh-btn')?.classList.remove('hidden');
-                await downloadFromCloud();
+            // 首次啟動如果已有 URL 則自動抓取一次
+            if (GOOGLE_SCRIPT_URL) {
+                fetchFromCloud();
             }
         };
     </script>
 </body>
 </html>
+}
