@@ -1,13 +1,9 @@
-{
-type: uploaded file
-fileName: taxi trial v6.0.0_cloud.html
-fullContent:
 <!DOCTYPE html>
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>香港的士租賃管理系統 v6.0.0 (雲端雙機即時對齊版)</title>
+    <title>香港的士租賃管理系統 v5.9.3 (雲端整合版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #fcfcfc; -webkit-font-smoothing: antialiased; }
@@ -23,1062 +19,628 @@ fullContent:
         
         <div class="w-64 bg-white border-r border-gray-200 p-6 flex flex-col justify-between shrink-0 min-h-screen shadow-sm">
             <div>
-                <div class="flex flex-col gap-2 mb-8">
-                    <div class="flex items-center gap-3">
-                        <span class="text-2xl text-red-600">𚖖</span>
-                        <h1 class="font-bold text-xl text-gray-900 tracking-wider">的士營運管理</h1>
-                    </div>
-                    <div class="mt-2">
-                        <span id="sync-status-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-500">
-                            <span id="sync-status-dot" class="w-2 h-2 rounded-full bg-gray-400"></span>
-                            <span id="sync-status-text">本地暫存模式</span>
-                        </span>
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center text-white font-black text-lg shadow-sm">TAXI</div>
+                    <div>
+                        <h1 class="text-base font-bold tracking-tight text-gray-900">的士管理系統</h1>
+                        <p class="text-[10px] text-gray-400 font-medium tracking-wider">v5.9.3 REMOTE SYNC</p>
                     </div>
                 </div>
+                
                 <nav class="space-y-1">
-                    <button onclick="switchTab('dashboard')" data-tab="dashboard" class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm text-gray-600 hover:bg-gray-50 transition block">📊 總覽與智能日曆</button>
-                    <button onclick="switchTab('fleet')" data-tab="fleet" class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm text-gray-600 hover:bg-gray-50 transition block">🚗 車隊資產與車主</button>
-                    <button onclick="switchTab('maintenance')" data-tab="maintenance" class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm text-gray-600 hover:bg-gray-50 transition block">🔧 維修、年檢及扣租</button>
-                    <button onclick="switchTab('drivers')" data-tab="drivers" class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm text-gray-600 hover:bg-gray-50 transition block">👥 司機名冊與安全檔案</button>
-                    <button onclick="switchTab('scheduler')" data-tab="scheduler" class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm text-gray-600 hover:bg-gray-50 transition block">📅 拖放排班與天氣控制</button>
-                    <button onclick="switchTab('tunnel-upload')" data-tab="tunnel-upload" class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm text-gray-600 hover:bg-gray-50 transition block">🚇 隧道費批量配對</button>
-                    <div class="pt-4 border-t border-gray-100 my-2"></div>
-                    <button onclick="switchTab('manager-input')" data-tab="manager-input" class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm text-gray-600 hover:bg-gray-50 transition block">📝 Keith 流水登記</button>
-                    <button onclick="switchTab('accounting-ledger')" data-tab="accounting-ledger" class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm text-gray-600 hover:bg-gray-50 transition block">🏦 Joyce 會計與矩陣表</button>
-                    <div class="pt-4 border-t border-gray-100 my-2"></div>
-                    <button onclick="switchTab('system-data')" data-tab="system-data" class="tab-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm text-red-600 hover:bg-red-50 transition block">💾 雲端同步與系統數據庫</button>
+                    <button onclick="switchTab('dashboard')" id="btn-dashboard" class="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-50 active-tab transition-all">📊 數據總覽面板</button>
+                    <button onclick="switchTab('calendar')" id="btn-calendar" class="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-50 transition-all">📅 司機排班日曆</button>
+                    <button onclick="switchTab('ledger')" id="btn-ledger" class="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-50 transition-all">💵 的士租金總賬</button>
+                    <button onclick="switchTab('drivers')" id="btn-drivers" class="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-50 transition-all">🚖 司機檔案管理</button>
+                    <button onclick="switchTab('sync')" id="btn-sync" class="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-50 transition-all">💾 雲端同步與系統數據庫</button>
                 </nav>
             </div>
-            <div class="text-xs text-gray-400 font-medium pt-4">今天日期: 2026-06-18</div>
+            
+            <div class="pt-4 border-t border-gray-100">
+                <div class="flex items-center justify-between p-2 rounded-lg bg-gray-50">
+                    <div class="flex items-center gap-2">
+                        <span id="sync-indicator-dot" class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+                        <span id="sync-indicator-text" class="text-xs font-semibold text-gray-600">讀取中...</span>
+                    </div>
+                    <button onclick="forceSync()" class="p-1 hover:bg-gray-200 rounded transition-colors text-xs" title="立即強制同步">🔄</button>
+                </div>
+                <p id="sync-time-text" class="text-[10px] text-gray-400 mt-1.5 text-center">尚未與雲端同步</p>
+            </div>
         </div>
 
-        <div class="flex-1 bg-white p-10 min-w-0">
+        <main class="flex-1 p-10 overflow-y-auto">
             
             <div id="tab-dashboard" class="tab-content space-y-6">
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-900">即時營運大看板</h2>
-                    <p class="text-sm text-gray-500">快速核查車隊排班健康度與 30 天內真實收支流量。</p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div class="border border-gray-200 p-5 rounded-xl bg-white shadow-sm">
-                        <p class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">營運車隊總數</p>
-                        <h3 id="stat-cars" class="text-2xl font-bold text-gray-900">0 輛</h3>
-                    </div>
-                    <div class="border border-gray-200 p-5 rounded-xl bg-white shadow-sm">
-                        <p class="text-xs font-bold uppercase tracking-wider text-orange-500 mb-1">⏳ 等待維修 (Awaiting)</p>
-                        <h3 id="stat-maint-awaiting" class="text-2xl font-bold text-orange-600">0 項</h3>
-                    </div>
-                    <div class="border border-gray-200 p-5 rounded-xl bg-white shadow-sm">
-                        <p class="text-xs font-bold uppercase tracking-wider text-red-500 mb-1">⚠️ 過期未驗 (Overdue)</p>
-                        <h3 id="stat-maint-overdue" class="text-2xl font-bold text-red-600">0 項</h3>
-                    </div>
-                    <div class="border border-gray-200 p-5 rounded-xl bg-white shadow-sm">
-                        <p class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">活躍司機總數</p>
-                        <h3 id="stat-drivers-count" class="text-2xl font-bold text-gray-900">0 人</h3>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 p-6 rounded-xl border border-gray-200">
-                    <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-emerald-500">
-                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider">📥 過去 30 天內實際總收入 (Joyce核銷額)</h4>
-                        <p id="stat-30day-received" class="text-3xl font-mono font-bold text-emerald-600 mt-1">$0</p>
-                    </div>
-                    <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-red-500">
-                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider">📤 過去 30 天內實際總支出 (車主打款與維修)</h4>
-                        <p id="stat-30day-paid" class="text-3xl font-mono font-bold text-red-600 mt-1">$0</p>
-                    </div>
-                </div>
-
-                <div class="border border-red-200 p-6 rounded-xl bg-red-50/20 space-y-4">
-                    <div class="flex justify-between items-center flex-wrap gap-4">
-                        <div>
-                            <h3 class="font-bold text-gray-900 text-sm flex items-center gap-2">📋 司機欠款與營運摘要報告生成器</h3>
-                            <p class="text-xs text-gray-500">自動比對全期排班（已扣除大/小驗及颱風免租）及隧道費與司機已交款項。</p>
-                        </div>
-                        <button type="button" onclick="generateDebtReport()" class="bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-4 py-2 rounded-lg transition shadow-sm">⚡ 智能生成最新摘要報告</button>
-                    </div>
-                    <textarea id="debt-report-output" rows="6" class="w-full border rounded-lg p-3 font-mono text-xs bg-white hidden" placeholder="點擊上方按鈕將自動生成文字報告..."></textarea>
-                </div>
-
-                <div class="border border-gray-200 p-6 rounded-xl bg-white space-y-4 shadow-sm">
-                    <div class="flex justify-between items-center flex-wrap gap-2">
-                        <h3 class="font-bold text-gray-900 flex items-center gap-2">🗓️ 車隊排班健康觀測日曆 <span class="text-xs font-normal text-gray-500">(顯示 2026 年 6 月份)</span></h3>
-                        <div class="flex gap-3 text-xs">
-                            <span class="flex items-center gap-1"><span class="w-3 h-3 bg-green-500 rounded"></span>滿更</span>
-                            <span class="flex items-center gap-1"><span class="w-3 h-3 bg-yellow-400 rounded"></span>有空缺</span>
-                            <span class="flex items-center gap-1"><span class="w-3 h-3 bg-red-500 rounded"></span>缺3輛以上</span>
-                            <span class="flex items-center gap-1"><span class="w-3 h-3 bg-gray-400 rounded"></span>惡劣天氣</span>
-                        </div>
-                    </div>
-                    <div id="dashboard-calendar-grid" class="grid grid-cols-7 gap-2 text-center text-xs font-bold"></div>
-                </div>
-
-                <div id="calendar-day-modal" class="hidden border-2 border-gray-900 bg-gray-50 p-6 rounded-xl space-y-4 shadow-lg">
-                    <div class="flex justify-between items-center border-b pb-2">
-                        <h3 class="text-md font-bold text-gray-900">🔍 <span id="modal-date-title" class="font-mono"></span> 車隊實際安排明細</h3>
-                        <button type="button" onclick="closeCalendarModal()" class="text-xs font-bold bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded">✕ 關閉</button>
-                    </div>
-                    <div id="modal-weather-alert" class="hidden bg-gray-600 text-white p-2 rounded text-xs font-bold text-center">⚠️ 該日已觸發惡劣天氣停駛機制，車租已自動豁免減免！</div>
-                    <div class="overflow-x-auto bg-white rounded-lg border shadow-sm">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-gray-100"><tr><th class="p-2 border">車牌</th><th class="p-2 border">☀️ 日更司機</th><th class="p-2 border">🌙 夜更司機</th></tr></thead>
-                            <tbody id="modal-schedule-tbody"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div id="tab-fleet" class="tab-content hidden space-y-6">
-                <form id="car-form" onsubmit="addCar(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 border p-6 rounded-xl bg-gray-50/30">
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1">車牌號碼</label><input type="text" id="car-plate" placeholder="AB 1234" required class="w-full border rounded-lg px-3 py-1.5 text-sm bg-white"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1">車主姓名</label><input type="text" id="car-owner" placeholder="陳生" required class="w-full border rounded-lg px-3 py-1.5 text-sm bg-white"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1">車主電話</label><input type="text" id="car-owner-phone" placeholder="60001111" required class="w-full border rounded-lg px-3 py-1.5 text-sm bg-white"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1">合約起租生效日</label><input type="date" id="car-start-date" required class="w-full border rounded-lg px-3 py-1.5 text-sm bg-white"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1">整月合約租金</label><input type="number" id="car-cost" required class="w-full border rounded-lg px-3 py-1.5 text-sm bg-white"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1">已付車主按金</label><input type="number" id="car-owner-deposit" required class="w-full border rounded-lg px-3 py-1.5 text-sm bg-white"></div>
-                    <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-500 mb-1">車主內部備註 (Remark)</label><input type="text" id="car-owner-remark" placeholder="牌照到期日/特別打款要求等" class="w-full border rounded-lg px-3 py-1.5 text-sm bg-white"></div>
-                    <div class="md:col-span-4 text-right"><button type="submit" class="bg-gray-900 text-white font-semibold rounded-lg px-6 py-2 text-sm hover:bg-gray-800 transition">新增車輛與車主</button></div>
-                </form>
-                <div id="owner-detail-card" class="hidden border-2 border-blue-600 bg-blue-50/20 p-5 rounded-xl space-y-2 shadow-sm">
-                    <div class="flex justify-between items-center"><h3 class="text-sm font-bold text-blue-700">👤 車主深度聯絡檔案: <span id="owner-detail-name" class="text-gray-900 underline"></span></h3><button type="button" onclick="closeOwnerDetail()" class="text-xs bg-gray-200 px-2 py-1 rounded">關閉面板 ✕</button></div>
-                    <div class="grid grid-cols-2 gap-4 bg-white p-4 rounded-lg border">
-                        <p class="text-xs font-medium">📞 聯絡電話：<span id="owner-detail-phone" class="font-mono font-bold text-gray-900"></span></p>
-                        <p class="text-xs font-medium">📝 內部備註：<span id="owner-detail-remark" class="text-gray-700 italic"></span></p>
-                    </div>
-                </div>
-                <div class="overflow-x-auto border border-gray-200 rounded-lg shadow-sm"><table class="w-full text-left text-sm"><thead class="bg-gray-50"><tr><th class="p-4">車牌</th><th class="p-4">車主姓名 (點擊詳情)</th><th class="p-4">起租日</th><th class="p-4">月租金</th><th class="p-4">已付按金</th><th class="p-4">操作</th></tr></thead><tbody id="fleet-table-body"></tbody></table></div>
-            </div>
-
-            <div id="tab-maintenance" class="tab-content hidden space-y-6">
-                <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 text-xs text-amber-800 font-medium space-y-1">
-                    <p>💡 <strong>智能會計扣減規則：</strong></p>
-                    <p>1️⃣ 當類型選擇為 <strong>「大驗」</strong> 且未完成時，系統會自動<strong>豁免全日（兩更）的車租</strong>。</p>
-                    <p>2️⃣ 當類型選擇為 <strong>「小驗」</strong> 且未完成時，系統會自動<strong>豁免半更的車租</strong>。</p>
-                </div>
-                <form id="maint-form" onsubmit="addMaintenance(event)" class="grid grid-cols-1 md:grid-cols-6 gap-3 items-end border p-6 rounded-xl bg-gray-50/30">
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1">車牌</label><select id="maint-car" required class="w-full border rounded-lg px-3 py-2 text-sm bg-white"></select></div>
+                <div class="flex justify-between items-center">
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-1">類型</label>
-                        <select id="maint-type" class="w-full border rounded-lg px-3 py-2 text-sm bg-white">
-                            <option value="維修">維修修理</option>
-                            <option value="換油">換油 (Oil Change)</option>
-                            <option value="大驗">政府大驗 (全日車租豁免)</option>
-                            <option value="小驗">政府小驗 (半更車租豁免)</option>
-                        </select>
+                        <h2 class="text-2xl font-bold tracking-tight text-gray-900">數據總覽面板</h2>
+                        <p class="text-sm text-gray-500">即時監控未付租金、按金資產及司機狀態。</p>
                     </div>
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1">應驗/排程日期</label><input type="date" id="maint-date" required class="w-full border rounded-lg px-3 py-1.5 text-sm bg-white"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1">費用金額</label><input type="number" id="maint-cost" required class="w-full border rounded-lg px-3 py-1.5 text-sm bg-white"></div>
-                    <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-500 mb-1">詳細備註 (Remark)</label><input type="text" id="maint-remark" placeholder="備註描述" class="w-full border rounded-lg px-3 py-1.5 text-sm bg-white"></div>
-                    <button type="submit" class="w-full bg-gray-900 text-white font-semibold rounded-lg py-2.5 text-sm hover:bg-gray-800 transition md:col-span-6">加入維修排程</button>
-                </form>
-                <div class="overflow-x-auto border border-gray-200 rounded-lg shadow-sm">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-gray-50">
-                            <tr><th class="p-3">狀態</th><th class="p-3">排程日期</th><th class="p-3">車牌</th><th class="p-3">項目類型</th><th class="p-3">金額</th><th class="p-3">詳細備註 (Remark)</th><th class="p-3">操作</th></tr>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <p class="text-xs font-semibold text-gray-400 tracking-wider uppercase">🔴 未付租金總額</p>
+                        <p id="dash-unpaid" class="text-3xl font-bold text-red-600 mt-2 font-mono">$0</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <p class="text-xs font-semibold text-gray-400 tracking-wider uppercase">🟢 已付租金總額</p>
+                        <p id="dash-paid" class="text-3xl font-bold text-emerald-600 mt-2 font-mono">$0</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <p class="text-xs font-semibold text-gray-400 tracking-wider uppercase">💰 託管按金總額</p>
+                        <p id="dash-deposit" class="text-3xl font-bold text-blue-600 mt-2 font-mono">$0</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                        <p class="text-xs font-semibold text-gray-400 tracking-wider uppercase">👥 登記司機人數</p>
+                        <p id="dash-drivers" class="text-3xl font-bold text-gray-900 mt-2 font-mono">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-calendar" class="tab-content hidden space-y-6">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">司機排班日曆</h2>
+                        <p class="text-sm text-gray-500">點擊任意日期格子即可快速指派或切換司機。</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button onclick="changeMonth(-1)" class="px-3 py-1.5 border rounded-lg bg-white hover:bg-gray-50 font-medium text-sm">◀ 上個月</button>
+                        <span id="calendar-month-title" class="text-lg font-bold text-gray-800 min-w-[120px] text-center">2026年 06月</span>
+                        <button onclick="changeMonth(1)" class="px-3 py-1.5 border rounded-lg bg-white hover:bg-gray-50 font-medium text-sm">下個月 ▶</button>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div class="grid grid-cols-7 border-b text-center bg-gray-50 py-3 text-xs font-bold text-gray-500 tracking-wider">
+                        <div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div>
+                    </div>
+                    <div id="calendar-grid" class="grid grid-cols-7 divide-x divide-y bg-gray-100">
+                        </div>
+                </div>
+            </div>
+
+            <div id="tab-ledger" class="tab-content hidden space-y-6">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">的士租金總賬</h2>
+                        <p class="text-sm text-gray-500">橫向對齊查看 20、30 號租金收取進度。</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 text-xs font-bold text-gray-500 border-b tracking-wider">
+                                <th class="p-4">對賬月份</th>
+                                <th class="p-4 text-center bg-red-50/30">20號 租金</th>
+                                <th class="p-4 text-center bg-red-50/30">20號 狀態</th>
+                                <th class="p-4 text-center bg-gray-50/50">30號 租金</th>
+                                <th class="p-4 text-center bg-gray-50/50">30號 狀態</th>
+                            </tr>
                         </thead>
-                        <tbody id="maint-table-body"></tbody>
+                        <tbody id="ledger-table-body" class="divide-y text-sm">
+                            </tbody>
                     </table>
                 </div>
             </div>
 
             <div id="tab-drivers" class="tab-content hidden space-y-6">
-                <form id="driver-form" onsubmit="addDriver(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 border p-6 rounded-xl bg-gray-50/50">
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1">司機姓名</label><input type="text" id="driver-name" required class="w-full border bg-white rounded-lg px-3 py-1.5 text-sm"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1">香港身份證 (HKID)</label><input type="text" id="driver-hkid" placeholder="A123456(7)" required class="w-full border bg-white rounded-lg px-3 py-1.5 text-sm"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1">電話號碼</label><input type="text" id="driver-phone" placeholder="90001234" required class="w-full border bg-white rounded-lg px-3 py-1.5 text-sm"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1">常駐住址</label><input type="text" id="driver-address" placeholder="新界屯門..." required class="w-full border bg-white rounded-lg px-3 py-1.5 text-sm"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1">緊急聯絡人姓名</label><input type="text" id="driver-emergency-name" placeholder="陳太" required class="w-full border bg-white rounded-lg px-3 py-1.5 text-sm"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1">緊急聯絡人電話</label><input type="text" id="driver-emergency-phone" placeholder="91112222" required class="w-full border bg-white rounded-lg px-3 py-1.5 text-sm"></div>
+                <div class="flex justify-between items-center">
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 mb-1">駕駛的士車型</label>
-                        <select id="driver-car-type" class="w-full border bg-white rounded-lg px-3 py-1.5 text-sm">
-                            <option value="四仔">四仔 (4座位老款)</option>
-                            <option value="混能">混能 (Hybrid Comfort)</option>
-                            <option value="電車">電車 (BYD等純電)</option>
-                        </select>
+                        <h2 class="text-2xl font-bold text-gray-900">司機檔案管理</h2>
+                        <p class="text-sm text-gray-500">管理旗下租車司機基本個人資料與按金狀態。</p>
                     </div>
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1">固定主要更份</label><select id="driver-shift-pref" class="w-full border bg-white rounded-lg px-3 py-1.5 text-sm"><option value="日更">日更</option><option value="夜更">夜更</option><option value="特更">特更</option></select></div>
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1">單更約定租金</label><input type="number" id="driver-rate" required class="w-full border bg-white rounded-lg px-3 py-1.5 text-sm"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1">繳費週期</label><select id="driver-freq-days" class="w-full border bg-white rounded-lg px-3 py-1.5 text-sm"><option value="1">每日繳</option><option value="7">每星期繳</option></select></div>
-                    <div><label class="block text-xs font-bold text-gray-500 mb-1">按金狀態</label><select id="driver-deposit-status" class="w-full border bg-white rounded-lg px-3 py-1.5 text-sm"><option value="Full">已繳足全額</option><option value="Waived">豁免按金</option><option value="Installment">分期付款</option></select></div>
-                    <div class="md:col-span-4 text-right"><button type="submit" class="bg-gray-900 text-white font-bold rounded-lg px-6 py-2 text-sm hover:bg-gray-800 transition">建立司機歷史檔案</button></div>
-                </form>
-                <div id="driver-detail-card" class="hidden border-2 border-red-200 bg-red-50/30 p-6 rounded-xl space-y-4 shadow-sm">
-                    <div class="flex justify-between items-center"><h3 class="text-md font-bold text-red-600">👤 司機深度歷史檔案: <span id="detail-card-name" class="text-gray-900 underline"></span></h3><button type="button" onclick="closeDriverDetail()" class="text-xs font-bold bg-gray-200 px-2 py-1 rounded hover:bg-gray-300">關閉面板 ✕</button></div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs bg-white p-4 rounded-lg border">
-                        <div><strong>住址:</strong> <span id="detail-display-address" class="text-gray-700"></span></div>
-                        <div><strong>專屬車型:</strong> <span id="detail-display-cartype" class="text-blue-600 font-bold"></span></div>
-                        <div><strong>緊急聯絡人:</strong> <span id="detail-display-emergency" class="text-gray-700"></span></div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-white border p-4 rounded-lg">
-                            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">📅 過去 30 天內排班歷史</h4>
-                            <ul id="detail-past-shifts" class="text-xs space-y-1 max-h-40 overflow-y-auto text-gray-600 font-mono"></ul>
-                        </div>
-                        <div class="bg-white border p-4 rounded-lg">
-                            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">⚠️ 交通意外及違規紀錄備忘</h4>
-                            <textarea id="detail-accidents-text" oninput="saveDriverAccidentRecord()" class="w-full h-32 border rounded p-2 text-xs font-mono" placeholder="請在此輸入意外紀錄..."></textarea>
-                        </div>
-                    </div>
+                    <button onclick="openDriverModal()" class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-bold shadow-sm hover:bg-red-700 transition-colors">+ 新增司機檔案</button>
                 </div>
-                <div class="overflow-x-auto border border-gray-200 rounded-lg shadow-sm">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-gray-50 text-xs font-bold text-gray-500">
-                            <tr><th class="p-3">姓名 (點擊詳情)</th><th class="p-3">車型</th><th class="p-3">HKID 身份證</th><th class="p-3">電話</th><th class="p-3">主要更份</th><th class="p-3">單更租金</th><th class="p-3">週期</th><th class="p-3">操作</th></tr>
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 text-xs font-bold text-gray-500 border-b tracking-wider">
+                                <th class="p-4">司機姓名</th>
+                                <th class="p-4">電話號碼</th>
+                                <th class="p-4">車牌號碼</th>
+                                <th class="p-4">按金餘額</th>
+                                <th class="p-4">狀態</th>
+                                <th class="p-4 text-right">操作</th>
+                            </tr>
                         </thead>
-                        <tbody id="driver-table-body"></tbody>
+                        <tbody id="driver-table-body" class="divide-y text-sm">
+                            </tbody>
                     </table>
                 </div>
             </div>
 
-            <div id="tab-scheduler" class="tab-content hidden space-y-6">
-                <div class="flex flex-wrap gap-4 items-center justify-between border p-4 rounded-xl bg-gray-50">
-                    <div class="flex gap-3 items-center">
-                        <label class="text-sm font-bold text-gray-700">切換排班日期：</label>
-                        <input type="date" id="scheduler-date-focus" onchange="loadSchedulerBoard()" class="border rounded-lg px-3 py-1.5 text-sm bg-white font-mono">
-                    </div>
-                    <div class="flex gap-2 flex-wrap">
-                        <button type="button" onclick="triggerExtremeWeather('Day')" class="bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs px-3 py-2 rounded-lg transition shadow-sm">⛈️ 設定今日【日更】惡劣天氣免租</button>
-                        <button type="button" onclick="triggerExtremeWeather('Night')" class="bg-indigo-950 hover:bg-black text-white font-bold text-xs px-3 py-2 rounded-lg transition shadow-sm">⛈️ 設定今日【夜更】惡劣天氣免租</button>
-                        <button type="button" onclick="clearWeather()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs px-2 py-2 rounded-lg transition">重置天氣</button>
-                    </div>
+            <div id="tab-sync" class="tab-content hidden space-y-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">雲端同步與系統數據庫</h2>
+                    <p class="text-sm text-gray-500">系統已深度內嵌你的專屬 Google Sheet 雲端中樞端點。</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="md:col-span-2 border p-6 rounded-xl space-y-4 bg-white shadow-sm">
-                        <h3 class="font-bold text-gray-900 flex justify-between">🚗 車輛實際更份分配盤 <span id="board-date-label" class="text-sm text-red-600 font-mono font-bold"></span></h3>
-                        <div id="scheduler-vehicles-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
-                    </div>
-                    <div class="border p-6 rounded-xl bg-gray-100 space-y-4 shadow-sm">
-                        <h3 class="font-bold text-gray-900 text-xs uppercase tracking-wider text-gray-500">👥 當日未用司機名冊</h3>
-                        <div id="unassigned-drivers-pool" class="space-y-2 max-h-[500px] overflow-y-auto"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="tab-tunnel-upload" class="tab-content hidden space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="border p-6 rounded-xl bg-white shadow-sm"><textarea id="tunnel-bulk-input" rows="8" class="w-full border rounded-lg p-3 font-mono text-xs" placeholder="車牌  日期 時間 金額"></textarea><button type="button" onclick="processBulkTunnelFees()" class="w-full bg-red-600 text-white font-semibold py-2.5 rounded-lg text-sm mt-2 hover:bg-red-700 transition">⚡ 執行智能配對</button></div>
-                    <div class="md:col-span-2 border rounded-xl shadow-sm"><div class="overflow-x-auto max-h-80"><table class="w-full text-left text-sm"><tbody id="tunnel-log-body"></tbody></table></div></div>
-                </div>
-            </div>
-
-            <div id="tab-manager-input" class="tab-content hidden space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="border p-6 rounded-xl bg-white space-y-4 shadow-sm">
-                        <h3 class="font-bold text-red-600">💰 1. 登記【司機】交來款項</h3>
-                        <form id="manager-payment-form" onsubmit="addDriverPaymentKeith(event)" class="space-y-4">
-                            <div><label class="block text-xs font-bold text-gray-500 mb-1">選擇司機</label><select id="mp-driver" required class="w-full border rounded-lg px-3 py-2 text-sm bg-white"></select></div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div><label class="block text-xs font-bold text-gray-500 mb-1">款項項目類別</label><select id="mp-type" class="w-full border rounded-lg px-3 py-2 text-sm bg-white"><option value="Rent">租金</option><option value="Tunnel">隧道費</option><option value="Maintenance">維修費</option><option value="Deposit">按金</option></select></div>
-                                <div><label class="block text-xs font-bold text-gray-500 mb-1">實收金額</label><input type="number" id="mp-amount" required class="w-full border rounded-lg px-3 py-2 text-sm" placeholder="金額"></div>
-                            </div>
-                            <div><label class="block text-xs font-bold text-gray-500 mb-1">收款日期</label><input type="date" id="mp-date" required class="w-full border rounded-lg px-3 py-2 text-sm"></div>
-                            <button type="submit" class="w-full bg-gray-900 text-white font-semibold py-2 rounded-lg text-sm hover:bg-gray-800 transition">存檔司機流水</button>
-                        </form>
-                    </div>
-                    <div class="border p-6 rounded-xl bg-white space-y-4 shadow-sm">
-                        <h3 class="font-bold text-gray-900">🚗 2. 登記【車主】項目支出</h3>
-                        <form id="owner-reimburse-form" onsubmit="addOwnerReimburseKeith(event)" class="space-y-4">
-                            <div><label class="block text-xs font-bold text-gray-500 mb-1">選擇車主</label><select id="mp-owner" required class="w-full border rounded-lg px-3 py-2 text-sm bg-white"></select></div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div><label class="block text-xs font-bold text-gray-500 mb-1">摘要描述</label><input type="text" id="mp-owner-item" placeholder="例如: 代支保費" required class="w-full border rounded-lg px-3 py-2 text-sm"></div>
-                                <div><label class="block text-xs font-bold text-gray-500 mb-1">金額</label><input type="number" id="mp-owner-amount" required class="w-full border rounded-lg px-3 py-2 text-sm" placeholder="金額"></div>
-                            </div>
-                            <div><label class="block text-xs font-bold text-gray-500 mb-1">日期</label><input type="date" id="mp-owner-date" required class="w-full border rounded-lg px-3 py-2 text-sm"></div>
-                            <button type="submit" class="w-full bg-red-600 text-white font-semibold py-2 rounded-lg text-sm hover:bg-red-700 transition">存檔車主流水</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div id="tab-accounting-ledger" class="tab-content hidden space-y-8">
-                <div class="border p-6 rounded-xl bg-white space-y-4 shadow-sm">
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
                     <div>
-                        <h3 class="font-bold text-red-600 text-lg">📊 車主結算矩陣表（自動扣減免租與大/小驗全半更）</h3>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Google Apps Script Web App 端點網址 (已內嵌)</label>
+                        <input type="text" id="setting-endpoint-url" disabled class="w-full px-3 py-2 border rounded-lg bg-gray-100 font-mono text-xs text-gray-600 select-all">
                     </div>
-                    <div class="w-full overflow-x-auto border border-gray-200 rounded-xl bg-gray-50/50">
-                        <table class="min-w-[1050px] text-left text-xs border-collapse">
-                            <thead class="bg-gray-900 text-white">
-                                <tr>
-                                    <th class="p-4 border sticky left-0 bg-gray-900 z-10 w-44">車主姓名</th>
-                                    <th class="p-4 border text-center w-28">託管車輛數</th>
-                                    <th class="p-4 border bg-gray-800 text-center col-span-2">【上旬 10 號期】</th>
-                                    <th class="p-4 border bg-red-950 text-center col-span-2">【中旬 20 號期】</th>
-                                    <th class="p-4 border bg-gray-800 text-center col-span-2">【下旬 30 號期】</th>
-                                </tr>
-                                <tr class="bg-gray-800 text-[10px] text-gray-300">
-                                    <th class="p-2 border sticky left-0 bg-gray-800 z-10"></th><th class="p-2 border"></th>
-                                    <th class="p-2 border text-center">應付</th><th class="p-2 border text-center">狀態</th>
-                                    <th class="p-2 border text-center">應付</th><th class="p-2 border text-center">狀態</th>
-                                    <th class="p-2 border text-center">應付</th><th class="p-2 border text-center">狀態</th>
-                                </tr>
-                            </thead>
-                            <tbody id="owner-horizontal-tbody" class="bg-white"></tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="border p-6 rounded-xl bg-white space-y-4 shadow-sm">
-                    <h3 class="font-bold text-gray-900">🏦 司機流水對齊核銷明細</h3>
-                    <div class="w-full overflow-x-auto">
-                        <table class="w-full text-left text-sm min-w-[800px] table-fixed">
-                            <thead class="bg-gray-100">
-                                <tr>
-                                    <th class="p-3 border w-1/6">日期</th><th class="p-3 border w-1/6">司機姓名</th><th class="p-3 border w-1/6">項目類別</th>
-                                    <th class="p-3 border w-1/6">Keith 實收</th><th class="p-3 border w-1/6 text-emerald-600">Joyce 核銷欄</th><th class="p-3 border w-1/6 text-red-600">不符差額</th>
-                                </tr>
-                            </thead>
-                            <tbody id="accounting-table-body"></tbody>
-                        </table>
+                    <div class="p-4 bg-emerald-50 text-emerald-800 rounded-lg text-xs space-y-1">
+                        <p class="font-bold">✨ 自動同步啟用中：</p>
+                        <p>此系統在有網路時會自動在背後與 Google 試算表保持同步，你和 Joyce 任何一人修改，對方都會即時收到更新！</p>
                     </div>
                 </div>
             </div>
 
-            <div id="tab-system-data" class="tab-content hidden space-y-6">
-                <div><h2 class="text-2xl font-bold text-gray-900">💾 雲端即時同步與系統數據庫</h2></div>
-                
-                <div class="border-2 border-red-100 p-6 rounded-xl bg-red-50/10 space-y-3">
-                    <h3 class="font-bold text-gray-900 flex items-center gap-2">🌐 Google Sheets 雙機雲端串接設定</h3>
-                    <p class="text-xs text-gray-500">請在下方填入你的 Google Apps Script Web App 部署網址。設定完成後，Keith 與 Joyce 將實現跨裝置即時共同編輯。</p>
-                    <div class="flex gap-2">
-                        <input type="text" id="cloud-script-url-input" placeholder="https://script.google.com/macros/s/XXXXX/exec" class="flex-1 border rounded-lg px-3 py-2 text-xs font-mono bg-white">
-                        <button onclick="saveCloudUrlConfig()" class="bg-red-600 text-white font-bold text-xs px-4 py-2 rounded-lg hover:bg-red-700 transition shrink-0">儲存端點設定</button>
-                    </div>
-                    <div class="text-[11px] text-gray-400">目前雲端快取最後載入時間: <span id="cloud-last-sync-time-label" class="font-mono">無</span></div>
-                </div>
+        </main>
+    </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="border p-6 rounded-xl bg-white space-y-3">
-                        <h3 class="font-bold text-gray-900">📤 導出 JSON 備份</h3>
-                        <button onclick="exportSystemData()" class="bg-gray-900 text-white font-bold text-sm px-4 py-2 rounded-lg hover:bg-gray-800 transition">💾 下載備份檔案</button>
-                    </div>
-                    <div class="border p-6 rounded-xl bg-white space-y-3">
-                        <h3 class="font-bold text-red-600">📥 匯入 JSON 備份</h3>
-                        <input type="file" id="import-file-input" accept=".json" class="block w-full text-xs text-gray-500 my-2">
-                        <button onclick="importSystemData()" class="bg-red-600 text-white font-bold text-sm px-4 py-2 rounded-lg hover:bg-red-700 transition">⚡ 執行數據還原</button>
-                    </div>
+    <div id="driver-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-xl border max-w-md w-full p-6 space-y-4">
+            <h3 id="driver-modal-title" class="text-lg font-bold text-gray-900">新增司機檔案</h3>
+            <input type="hidden" id="driver-edit-id">
+            <div class="space-y-3 text-sm">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1">司機姓名</label>
+                    <input type="text" id="driver-name" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
                 </div>
-                <div class="pt-6 border-t"><button onclick="forceResetSystem()" class="px-4 py-2 rounded-lg text-xs text-red-600 bg-red-50 font-bold hover:bg-red-100 transition">⚠️ 強制重置整個系統</button></div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1">電話號碼</label>
+                    <input type="text" id="driver-phone" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1">的士車牌</label>
+                    <input type="text" id="driver-car" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1">按金金額 (HKD)</label>
+                    <input type="number" id="driver-deposit" value="0" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 font-mono">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1">狀態</label>
+                    <select id="driver-status" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <option value="active">🟢 正常執業中</option>
+                        <option value="inactive">🔴 已退交車輛</option>
+                    </select>
+                </div>
             </div>
-
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeDriverModal()" class="px-4 py-2 border rounded-lg text-sm font-medium hover:bg-gray-50">取消</button>
+                <button onclick="saveDriverForm()" class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-bold hover:bg-red-700">儲存存檔</button>
+            </div>
         </div>
     </div>
 
-    <div id="sync-conflict-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 antialiased">
-        <div class="bg-white max-w-md w-full rounded-2xl p-6 border-2 border-red-600 shadow-2xl space-y-4">
-            <div class="flex items-center gap-3 text-red-600">
-                <span class="text-3xl">⚠️</span>
-                <h3 class="font-bold text-lg text-gray-900">偵測到數據衝突（雙方同時修改）</h3>
+    <div id="day-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-xl border max-w-sm w-full p-6 space-y-4">
+            <div>
+                <h3 id="day-modal-title" class="text-lg font-bold text-gray-900">日期調配區</h3>
+                <p id="day-modal-subtitle" class="text-xs text-gray-400 mt-0.5 font-mono"></p>
             </div>
-            <p class="text-xs text-gray-600 leading-relaxed">
-                系統發現其他裝置（例如另一方的瀏覽器）在更晚的時間點更新了雲端數據。為了防止資料覆蓋，本地寫入請求已被安全拒絕。
-            </p>
-            <div class="bg-red-50 text-red-800 p-3 rounded-lg text-xs font-medium">
-                系統正自動下載最新的雲端數據，請重新輸入剛才的變更。
-            </p>
-            <div class="text-right">
-                <button onclick="dismissConflictModal()" class="bg-gray-900 hover:bg-gray-800 text-white font-bold text-xs px-4 py-2 rounded-lg transition">我明白了 (自動重新對齊)</button>
+            <input type="hidden" id="day-modal-date">
+            <div class="space-y-3 text-sm">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1">指派當值司機</label>
+                    <select id="day-driver-select" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1">當日特設特惠/特高單日租金 (HKD)</label>
+                    <input type="number" id="day-rent-input" value="850" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 font-mono">
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeDayModal()" class="px-4 py-2 border rounded-lg text-sm font-medium hover:bg-gray-50">關閉</button>
+                <button onclick="saveDaySettings()" class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-bold hover:bg-red-700">更新數據</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Core Logic Application State
-        let state = { 
-            cars: [], drivers: [], shifts: [], tunnels: [], payments: [], 
-            ownerExpenses: [], maintenances: [], ownerPayoutVerification: {}, 
-            accidents: {}, weather: {} 
+        // =========================================================================
+        // 🔒 網址已完成封裝 (無需手動修改)
+        // =========================================================================
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxg_qPK7WY5wPBiogAlDA3yUhy7edZcvboqkNUu6_qOvc0qERBV1sHQt81RxOuY_mkyA/exec";
+
+        // 全局核心狀態
+        let sysState = {
+            drivers: [],
+            schedule: {}, // key: "YYYY-MM-DD" -> { driverId, rent }
+            ledgerPaid: {} // key: "YYYY-MM-20" or "YYYY-MM-30" -> true/false
         };
-        let currentActiveDriverId = null;
-        const TODAY_STR = "2026-06-18";
 
-        // ==========================================
-        // 🚀 雲端同步引擎核心變數 (Cloud Sync Engine)
-        // ==========================================
-        let GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyKQzkmxu_jHOymCjoSpAsrOM87VDlkgQ9u7GTx3FLM83iTKrO5GdovBOwzNNETNX88kw/exec"; // 可在此寫入預設 URL，或直接在網頁設定分頁輸入
-        let _lastSyncedTimestamp = new Date(0).toISOString(); 
-        let _isSyncing = false;
-        let _syncHeartbeatInterval = null;
+        // 核心併發時間截記對齊變數
+        let baseTimestamp = new Date(0).toISOString(); 
+        let currentYear = 2026;
+        let currentMonth = 5; // 代表 6 月 (0-indexed)
 
-        // 防禦型安全加載函數：防止任何損壞的舊緩存數據導致腳本崩潰
-        function hydrateState() {
-            try {
-                // 優先讀取雲端 URL 配置
-                const savedUrl = localStorage.getItem('hk_taxi_cloud_url');
-                if (savedUrl) {
-                    GOOGLE_SCRIPT_URL = savedUrl;
-                    if(document.getElementById('cloud-script-url-input')) {
-                        document.getElementById('cloud-script-url-input').value = savedUrl;
-                    }
-                }
-
-                const saved = localStorage.getItem('hk_taxi_v5_state');
-                const savedTimestamp = localStorage.getItem('hk_taxi_v5_sync_time');
-                if (savedTimestamp) _lastSyncedTimestamp = savedTimestamp;
-
-                if (saved) {
-                    let parsed = JSON.parse(saved) || {};
-                    state = {
-                        cars: Array.isArray(parsed.cars) ? parsed.cars : [],
-                        drivers: Array.isArray(parsed.drivers) ? parsed.drivers : [],
-                        shifts: Array.isArray(parsed.shifts) ? parsed.shifts : [],
-                        tunnels: Array.isArray(parsed.tunnels) ? parsed.tunnels : [],
-                        payments: Array.isArray(parsed.payments) ? parsed.payments : [],
-                        ownerExpenses: Array.isArray(parsed.ownerExpenses) ? parsed.ownerExpenses : [],
-                        maintenances: Array.isArray(parsed.maintenances) ? parsed.maintenances : [],
-                        ownerPayoutVerification: (parsed.ownerPayoutVerification && typeof parsed.ownerPayoutVerification === 'object') ? parsed.ownerPayoutVerification : {},
-                        accidents: (parsed.accidents && typeof parsed.accidents === 'object') ? parsed.accidents : {},
-                        weather: (parsed.weather && typeof parsed.weather === 'object') ? parsed.weather : {}
-                    };
-                }
-            } catch(e) { console.error("Hydration Error:", e); }
-        }
-
-        // 修改後高槓桿的核心架構：所有增刪改動作最終都會呼叫 saveState()。
-        // 我們直接在此注入 pushToCloud 雲端同步發送點
-        function saveState(skipCloudPush = false) {
-            try { 
-                localStorage.setItem('hk_taxi_v5_state', JSON.stringify(state)); 
-                localStorage.setItem('hk_taxi_v5_sync_time', _lastSyncedTimestamp);
-            } catch(e) {}
+        // 頁面啟動初始化
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('setting-endpoint-url').value = GOOGLE_SCRIPT_URL;
+            loadFromLocalCache(); // 1. 先用本地快取跑出畫面
+            forceSync();          // 2. 隨即連線雲端進行對齊更新
             
-            updateSelectors();
-            renderAll();
+            // 每隔 30 秒執行一次全自動背景對齊 (Heartbeat)
+            setInterval(forceSync, 30000);
+            // 當使用者切換回這個網頁分頁時，立刻觸發對齊，防止兩邊錯開
+            window.addEventListener('focus', forceSync);
+        });
 
-            // 如果有設定雲端網址且未註明跳過，觸發高頻同步寫入
-            if (GOOGLE_SCRIPT_URL && !skipCloudPush) {
-                pushToCloud();
+        function loadFromLocalCache() {
+            const cache = localStorage.getItem('taxi_sys_local_state');
+            const timeCache = localStorage.getItem('taxi_sys_local_time');
+            if (cache) {
+                try { sysState = JSON.parse(cache); } catch(e) { console.error("本地解析快取出錯", e); }
             }
+            if (timeCache) { baseTimestamp = timeCache; }
+            renderAllComponents();
         }
 
-        function saveCloudUrlConfig() {
-            const urlInput = document.getElementById('cloud-script-url-input');
-            if (urlInput) {
-                const targetUrl = urlInput.value.trim();
-                localStorage.setItem('hk_taxi_cloud_url', targetUrl);
-                GOOGLE_SCRIPT_URL = targetUrl;
-                alert("🌐 雲端點對點 URL 儲存成功！系統正為你執行首次雲端同步抓取...");
-                fetchFromCloud();
-            }
+        function saveAndSync() {
+            const newTimestamp = new Date().toISOString();
+            localStorage.setItem('taxi_sys_local_state', JSON.stringify(sysState));
+            localStorage.setItem('taxi_sys_local_time', newTimestamp);
+            
+            updateSyncIndicator('syncing', '資料正在推送雲端...');
+            
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // 允許無跨域阻攔寫入
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    state: sysState,
+                    timestamp: newTimestamp,
+                    baseTimestamp: baseTimestamp
+                })
+            })
+            .then(() => {
+                baseTimestamp = newTimestamp;
+                localStorage.setItem('taxi_sys_local_time', baseTimestamp);
+                updateSyncIndicator('synced', '已完成雲端同步');
+                document.getElementById('sync-time-text').innerText = '最後更新於: ' + new Date().toLocaleTimeString();
+                renderAllComponents();
+            })
+            .catch(err => {
+                console.error("雲端推送發生錯誤:", err);
+                updateSyncIndicator('error', '雲端連線不穩 (已保留於本地)');
+            });
+            
+            renderAllComponents();
         }
 
-        // 更新左邊欄狀態信號燈的函數
-        function updateSyncBadge(status) {
-            const badge = document.getElementById('sync-status-badge');
-            const dot = document.getElementById('sync-status-dot');
-            const txt = document.getElementById('sync-status-text');
-            if (!badge || !dot || !txt) return;
-
-            if (!GOOGLE_SCRIPT_URL) {
-                badge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-500";
-                dot.className = "w-2 h-2 rounded-full bg-gray-400";
-                txt.innerText = "本地暫存模式";
-                return;
-            }
-
-            switch(status) {
-                case 'synced':
-                    badge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200";
-                    dot.className = "w-2 h-2 rounded-full bg-emerald-500";
-                    txt.innerText = "雲端連線中 (Synced)";
-                    break;
-                case 'syncing':
-                    badge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200";
-                    dot.className = "w-2 h-2 rounded-full bg-amber-400 animate-pulse";
-                    txt.innerText = "正在同步...";
-                    break;
-                case 'error':
-                    badge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-200";
-                    dot.className = "w-2 h-2 rounded-full bg-red-500";
-                    txt.innerText = "雲端連線失敗 (Offline)";
-                    break;
-            }
-        }
-
-        // ==========================================
-        // 核心同步方法 API Layer
-        // ==========================================
-        async function fetchFromCloud() {
-            if (!GOOGLE_SCRIPT_URL || _isSyncing) return;
-            _isSyncing = true;
-            updateSyncBadge('syncing');
-
-            try {
-                const response = await fetch(GOOGLE_SCRIPT_URL, { method: 'GET', mode: 'cors' });
-                const resData = await response.json();
-                
-                if (resData && resData.timestamp) {
-                    const serverTime = new Date(resData.timestamp);
-                    const localTime = new Date(_lastSyncedTimestamp);
-
-                    // 只有當伺服器時間大於本地同步點時，才進行覆蓋覆核
-                    if (serverTime > localTime && resData.state) {
-                        state = resData.state;
-                        _lastSyncedTimestamp = resData.timestamp;
-                        // 帶入 localstorage，並跳過 push 防止無限迴圈
-                        saveState(true);
-                        const label = document.getElementById('cloud-last-sync-time-label');
-                        if (label) label.innerText = new Date(_lastSyncedTimestamp).toLocaleString();
+        function forceSync() {
+            updateSyncIndicator('syncing', '正在與雲端對齊...');
+            
+            fetch(GOOGLE_SCRIPT_URL)
+            .then(res => res.json())
+            .then(cloud => {
+                if (cloud && cloud.timestamp) {
+                    const cloudTime = new Date(cloud.timestamp);
+                    const localTime = new Date(baseTimestamp);
+                    
+                    if (cloudTime > localTime && cloud.state) {
+                        sysState = cloud.state;
+                        baseTimestamp = cloud.timestamp;
+                        localStorage.setItem('taxi_sys_local_state', JSON.stringify(sysState));
+                        localStorage.setItem('taxi_sys_local_time', baseTimestamp);
+                        console.log("⚡ 偵測到雲端有新改動，系統已自動對齊最新狀態！");
+                    } else {
+                        console.log("👍 雲端與本地版本一致，無需蓋寫。");
                     }
-                    updateSyncBadge('synced');
                 }
-            } catch (err) {
-                console.error("Cloud Fetch Failed:", err);
-                updateSyncBadge('error');
-            } finally {
-                _isSyncing = false;
+                updateSyncIndicator('synced', '已與雲端同步');
+                document.getElementById('sync-time-text').innerText = '最後同步: ' + new Date().toLocaleTimeString();
+                renderAllComponents();
+            })
+            .catch(err => {
+                console.error("讀取雲端出錯:", err);
+                updateSyncIndicator('error', '離線模式 (正在使用本地數據)');
+            });
+        }
+
+        function updateSyncIndicator(status, text) {
+            const dot = document.getElementById('sync-indicator-dot');
+            const txt = document.getElementById('sync-indicator-text');
+            txt.innerText = text;
+            
+            dot.className = "w-2.5 h-2.5 rounded-full ";
+            if (status === 'syncing') {
+                dot.className += "bg-amber-500 animate-pulse";
+            } else if (status === 'synced') {
+                dot.className += "bg-emerald-500";
+            } else {
+                dot.className += "bg-red-500";
             }
         }
 
-        async function pushToCloud() {
-            if (!GOOGLE_SCRIPT_URL || _isSyncing) return;
-            _isSyncing = true;
-            updateSyncBadge('syncing');
-
-            const currentClientTimestamp = new Date().toISOString();
-            const payload = {
-                state: state,
-                timestamp: currentClientTimestamp,
-                baseTimestamp: _lastSyncedTimestamp
-            };
-
-            try {
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'cors',
-                    body: JSON.stringify(payload)
-                });
-                const resData = await response.json();
-
-                if (resData.status === "success") {
-                    _lastSyncedTimestamp = resData.timestamp;
-                    localStorage.setItem('hk_taxi_v5_sync_time', _lastSyncedTimestamp);
-                    const label = document.getElementById('cloud-last-sync-time-label');
-                    if (label) label.innerText = new Date(_lastSyncedTimestamp).toLocaleString();
-                    updateSyncBadge('synced');
-                } else if (resData.status === "conflict") {
-                    // 核心要求：顯示衝突 Modal 並直接執行對齊下載
-                    document.getElementById('sync-conflict-modal').classList.remove('hidden');
-                    if (resData.serverData) {
-                        state = resData.serverData;
-                        _lastSyncedTimestamp = resData.serverTimestamp || currentClientTimestamp;
-                        saveState(true); 
-                    }
-                    updateSyncBadge('synced');
-                } else {
-                    updateSyncBadge('error');
-                }
-            } catch (err) {
-                console.error("Cloud Push Failed:", err);
-                updateSyncBadge('error');
-            } finally {
-                _isSyncing = false;
-            }
-        }
-
-        function dismissConflictModal() {
-            document.getElementById('sync-conflict-modal').classList.add('hidden');
-        }
-
-        // ==========================================
-        // 原生業務邏輯與介面操作函數 (保持完美相容性)
-        // ==========================================
-        function exportSystemData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `Taxi_System_v6.0.0.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click(); downloadAnchor.remove();
-        }
-        
-        function importSystemData() {
-            const fileInput = document.getElementById('import-file-input');
-            if (!fileInput || fileInput.files.length === 0) return alert("請選取檔案");
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const parsed = JSON.parse(e.target.result);
-                    if (parsed && typeof parsed === 'object') {
-                        state = parsed; saveState(); alert("🎉 數據還原成功並已排程推播至雲端！");
-                    }
-                } catch(err) { alert("讀取錯誤。"); }
-            };
-            reader.readAsText(fileInput.files[0]);
-        }
-
-        function forceResetSystem() { 
-            if(confirm("確定要重置並清空全部數據嗎？雲端與本地將同步清空。")) { 
-                localStorage.removeItem('hk_taxi_v5_state'); 
-                localStorage.removeItem('hk_taxi_v5_sync_time');
-                state = { cars: [], drivers: [], shifts: [], tunnels: [], payments: [], ownerExpenses: [], maintenances: [], ownerPayoutVerification: {}, accidents: {}, weather: {} };
-                saveState();
-                location.reload(); 
-            } 
-        }
-
+        // UI 渲染與切換中樞
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            const targetTab = document.getElementById('tab-' + tabId);
-            if(targetTab) targetTab.classList.remove('hidden');
-            
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active-tab');
-                if(btn.getAttribute('data-tab') === tabId) {
-                    btn.classList.add('active-tab');
-                }
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active-tab'));
+            document.getElementById(`btn-${tabId}`).classList.add('active-tab');
+        }
+
+        function renderAllComponents() {
+            renderDashboard();
+            renderCalendar();
+            renderLedger();
+            renderDrivers();
+        }
+
+        // 各大模組渲染子邏輯
+        function renderDashboard() {
+            let totalUnpaid = 0;
+            let totalPaid = 0;
+            let depositSum = 0;
+
+            sysState.drivers.forEach(d => {
+                if (d.status === 'active') depositSum += Number(d.deposit || 0);
             });
-            if(tabId === 'scheduler') { 
-                const focusEl = document.getElementById('scheduler-date-focus');
-                if(focusEl && !focusEl.value) focusEl.value = TODAY_STR; 
-                loadSchedulerBoard(); 
-            }
-        }
 
-        function openOwnerDetail(name, phone, remark) {
-            document.getElementById('owner-detail-card').classList.remove('hidden');
-            document.getElementById('owner-detail-name').innerText = name;
-            document.getElementById('owner-detail-phone').innerText = phone || '無記錄';
-            document.getElementById('owner-detail-remark').innerText = remark || '無備註';
-        }
-        function closeOwnerDetail() { document.getElementById('owner-detail-card').classList.add('hidden'); }
-
-        function addCar(e) {
-            e.preventDefault();
-            state.cars.push({
-                id: Date.now(), 
-                plate: document.getElementById('car-plate').value.trim().toUpperCase(),
-                owner: document.getElementById('car-owner').value.trim(), 
-                phone: document.getElementById('car-owner-phone').value.trim(),
-                startDate: document.getElementById('car-start-date').value,
-                cost: parseFloat(document.getElementById('car-cost').value) || 0, 
-                deposit: parseFloat(document.getElementById('car-owner-deposit').value) || 0,
-                remark: document.getElementById('car-owner-remark').value.trim()
-            });
-            document.getElementById('car-form').reset(); saveState();
-        }
-        function removeCar(id) { state.cars = state.cars.filter(c => c.id !== id); saveState(); }
-
-        function addMaintenance(e) {
-            e.preventDefault();
-            state.maintenances.push({ 
-                id: Date.now(), plate: document.getElementById('maint-car').value, type: document.getElementById('maint-type').value, date: document.getElementById('maint-date').value, 
-                cost: parseFloat(document.getElementById('maint-cost').value) || 0, remark: document.getElementById('maint-remark').value.trim() || "無", isDone: false 
-            });
-            document.getElementById('maint-form').reset(); saveState();
-        }
-        function toggleMaintStatus(id, checked) { const m = state.maintenances.find(item => item.id === id); if(m) m.isDone = checked; saveState(); }
-        function removeMaint(id) { state.maintenances = state.maintenances.filter(m => m.id !== id); saveState(); }
-
-        function addDriver(e) {
-            e.preventDefault();
-            state.drivers.push({
-                id: Date.now(), name: document.getElementById('driver-name').value.trim(), hkid: document.getElementById('driver-hkid').value.trim().toUpperCase(),
-                phone: document.getElementById('driver-phone').value.trim(), address: document.getElementById('driver-address').value.trim(),
-                emergencyName: document.getElementById('driver-emergency-name').value.trim(), emergencyPhone: document.getElementById('driver-emergency-phone').value.trim(),
-                carType: document.getElementById('driver-car-type').value, shiftPref: document.getElementById('driver-shift-pref').value,
-                rate: parseFloat(document.getElementById('driver-rate').value) || 0, freqDays: document.getElementById('driver-freq-days').value, depositStatus: document.getElementById('driver-deposit-status').value
-            });
-            document.getElementById('driver-form').reset(); saveState();
-        }
-        function removeDriver(id) { state.drivers = state.drivers.filter(d => d.id !== id); saveState(); }
-
-        function openDriverDetail(driverId, name) {
-            currentActiveDriverId = driverId;
-            const d = state.drivers.find(item => item.id === driverId);
-            document.getElementById('driver-detail-card').classList.remove('hidden');
-            document.getElementById('detail-card-name').innerText = name;
-            document.getElementById('detail-accidents-text').value = state.accidents[driverId] || "";
-            document.getElementById('detail-display-address').innerText = d ? d.address : '無紀錄';
-            document.getElementById('detail-display-cartype').innerText = d ? d.carType : '未設定';
-            document.getElementById('detail-display-emergency').innerText = d ? `${d.emergencyName} (${d.emergencyPhone})` : '無';
-
-            const filteredShifts = state.shifts.filter(s => s.driverName === name);
-            document.getElementById('detail-past-shifts').innerHTML = filteredShifts.length > 0 
-                ? filteredShifts.map(s => `<li>🗓️ ${s.date} - ${s.carPlate} [${s.type==='Day'?'日更':'夜更'}]</li>`).join('')
-                : `<li class="text-gray-400 italic">無紀錄</li>`;
-        }
-        function closeDriverDetail() { document.getElementById('driver-detail-card').classList.add('hidden'); currentActiveDriverId = null; }
-        function saveDriverAccidentRecord() { if(currentActiveDriverId) { state.accidents[currentActiveDriverId] = document.getElementById('detail-accidents-text').value; localStorage.setItem('hk_taxi_v5_state', JSON.stringify(state)); if(GOOGLE_SCRIPT_URL) pushToCloud(); } }
-
-        function triggerExtremeWeather(shiftType) {
-            const tgtDate = document.getElementById('scheduler-date-focus').value; if(!tgtDate) return;
-            if(!state.weather[tgtDate]) state.weather[tgtDate] = {};
-            state.weather[tgtDate][shiftType] = true;
-            state.shifts = state.shifts.filter(s => !(s.date === tgtDate && s.type === shiftType));
-            state.cars.forEach(c => {
-                state.shifts.push({ id: Date.now()+Math.random(), date: tgtDate, carPlate: c.plate, type: shiftType, driverName: "[天氣惡劣 - 停駛]" });
-            });
-            saveState(); loadSchedulerBoard();
-        }
-        function clearWeather() {
-            const tgtDate = document.getElementById('scheduler-date-focus').value; if(!tgtDate) return;
-            state.weather[tgtDate] = {};
-            state.shifts = state.shifts.filter(s => !(s.date === tgtDate && (s.driverName === "[天氣惡劣 - 停駛]")));
-            saveState(); loadSchedulerBoard();
-        }
-
-        function handleDragStart(e, name) { e.dataTransfer.setData("text/plain", name); }
-        function handleDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-target'); }
-        function handleDragLeave(e) { e.currentTarget.classList.remove('drag-target'); }
-        function handleDropShift(e, plate, shiftType) {
-            e.preventDefault(); e.currentTarget.classList.remove('drag-target');
-            const driverName = e.dataTransfer.getData("text/plain"); if (!driverName) return;
-            const tgtDate = document.getElementById('scheduler-date-focus').value;
-            state.shifts = state.shifts.filter(s => !(s.date === tgtDate && s.carPlate === plate && s.type === shiftType));
-            const driverObj = state.drivers.find(d => d.name === driverName);
-            if (driverObj && driverObj.shiftPref === "特更") {
-                state.shifts = state.shifts.filter(s => !(s.date === tgtDate && s.carPlate === plate));
-                state.shifts.push({ id: Date.now(), date: tgtDate, carPlate: plate, type: 'Day', driverName: driverName });
-                state.shifts.push({ id: Date.now()+1, date: tgtDate, carPlate: plate, type: 'Night', driverName: driverName });
-            } else {
-                state.shifts.push({ id: Date.now(), date: tgtDate, carPlate: plate, type: shiftType, driverName: driverName });
-            }
-            saveState(); loadSchedulerBoard();
-        }
-
-        function clearShift(plate, shiftType) {
-            const tgtDate = document.getElementById('scheduler-date-focus').value;
-            state.shifts = state.shifts.filter(s => !(s.date === tgtDate && s.carPlate === plate && s.type === shiftType));
-            saveState(); loadSchedulerBoard();
-        }
-
-        function loadSchedulerBoard() {
-            const tgtDate = document.getElementById('scheduler-date-focus').value; if(!tgtDate) return;
-            const bLabel = document.getElementById('board-date-label'); if(bLabel) bLabel.innerText = tgtDate;
-            const bookedDriversToday = state.shifts.filter(s => s.date === tgtDate).map(s => s.driverName);
-
-            const grid = document.getElementById('scheduler-vehicles-grid');
-            if(grid) {
-                grid.innerHTML = state.cars.map(c => {
-                    const dayShift = state.shifts.find(s => s.date === tgtDate && s.carPlate === c.plate && s.type === 'Day');
-                    const nightShift = state.shifts.find(s => s.date === tgtDate && s.carPlate === c.plate && s.type === 'Night');
-                    return `
-                        <div class="border border-gray-200 p-4 rounded-xl bg-gray-50/30 shadow-sm">
-                            <div class="font-mono font-bold text-xs flex justify-between border-b pb-1"><span>🚗 ${c.plate}</span><span class="text-gray-400 font-normal">車主: ${c.owner}</span></div>
-                            <div class="p-2 bg-amber-50 rounded mt-2 border border-transparent" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDropShift(event, '${c.plate}', 'Day')">
-                                <span class="text-[10px] text-amber-700 font-bold block">☀️ 日更：</span>
-                                <div class="text-xs font-bold flex justify-between items-center h-6">
-                                    <span class="${dayShift?.driverName.includes('天氣')?'text-slate-500':''}">${dayShift ? '👤 ' + dayShift.driverName : '<span class="text-gray-400 font-normal">[拖放司機]</span>'}</span>
-                                    ${dayShift ? `<button type="button" onclick="clearShift('${c.plate}', 'Day')" class="text-red-500 font-bold text-[10px]">清空</button>` : ''}
-                                </div>
-                            </div>
-                            <div class="p-2 bg-indigo-50 rounded mt-2 border border-transparent" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDropShift(event, '${c.plate}', 'Night')">
-                                <span class="text-[10px] text-indigo-700 font-bold block">🌙 夜更：</span>
-                                <div class="text-xs font-bold flex justify-between items-center h-6">
-                                    <span class="${nightShift?.driverName.includes('天氣')?'text-slate-500':''}">${nightShift ? '👤 ' + nightShift.driverName : '<span class="text-gray-400 font-normal">[拖放司機]</span>'}</span>
-                                    ${nightShift ? `<button type="button" onclick="clearShift('${c.plate}', 'Night')" class="text-red-500 font-bold text-[10px]">清空</button>` : ''}
-                                </div>
-                            </div>
-                        </div>`;
-                }).join('');
-            }
-
-            const pool = document.getElementById('unassigned-drivers-pool');
-            if(pool) {
-                pool.innerHTML = state.drivers.map(d => {
-                    if (bookedDriversToday.includes(d.name)) return ''; 
-                    return `
-                        <div draggable="true" ondragstart="handleDragStart(event, '${d.name}')" class="p-3 border border-gray-200 rounded-lg bg-white text-xs font-bold shadow-sm cursor-move hover:bg-red-50 hover:border-red-300 transition flex justify-between items-center">
-                            <span>👤 ${d.name} <span class="text-[10px] font-normal text-gray-400">(${d.shiftPref})</span></span>
-                            <span class="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-500">::: 拖動</span>
-                        </div>`;
-                }).join('');
-            }
-        }
-
-        function processBulkTunnelFees() {
-            const rawText = document.getElementById('tunnel-bulk-input').value.trim(); if(!rawText) return;
-            rawText.split('\n').forEach(line => {
-                const parts = line.split(/\s+/);
-                if(parts.length >= 4) {
-                    const plate = parts[0].toUpperCase(); const passDate = parts[1]; const passTime = parts[2]; const fee = parseFloat(parts[3]);
-                    if(!isNaN(fee)) {
-                        const shiftType = (parseInt(passTime.split(':')[0]) >= 5 && parseInt(passTime.split(':')[0]) < 17) ? "Day" : "Night";
-                        const match = state.shifts.find(s => s.date === passDate && s.carPlate === plate && s.type === shiftType);
-                        state.tunnels.push({ id: Date.now()+Math.random(), timestamp: `${passDate} ${passTime}`, plate, fee, assignedDriver: match ? match.driverName : "未指派" });
+            // 計算 2026 全年各月份 20、30 號的收支
+            for (let m = 0; m < 12; m++) {
+                ['20', '30'].forEach(dayNum => {
+                    const key = `2026-${String(m+1).padStart(2, '0')}-${dayNum}`;
+                    let blockTotal = 0;
+                    
+                    // 加總該對賬期 15 天內的所有排班租金
+                    for (let d = 1; d <= 31; d++) {
+                        const dateStr = `2026-${String(m+1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                        if (dayNum === '20' && d >= 1 && d <= 15) {
+                            if (sysState.schedule[dateStr]) blockTotal += Number(sysState.schedule[dateStr].rent || 0);
+                        }
+                        if (dayNum === '30' && d >= 16 && d <= 31) {
+                            if (sysState.schedule[dateStr]) blockTotal += Number(sysState.schedule[dateStr].rent || 0);
+                        }
                     }
-                }
-            });
-            document.getElementById('tunnel-bulk-input').value = ""; saveState();
+
+                    if (sysState.ledgerPaid[key]) {
+                        totalPaid += blockTotal;
+                    } else {
+                        totalUnpaid += blockTotal;
+                    }
+                });
+            }
+
+            document.getElementById('dash-unpaid').innerText = `$${totalUnpaid.toLocaleString()}`;
+            document.getElementById('dash-paid').innerText = `$${totalPaid.toLocaleString()}`;
+            document.getElementById('dash-deposit').innerText = `$${depositSum.toLocaleString()}`;
+            document.getElementById('dash-drivers').innerText = sysState.drivers.length;
         }
 
-        function addDriverPaymentKeith(e) {
-            e.preventDefault();
-            state.payments.push({ id: Date.now(), date: document.getElementById('mp-date').value, driverName: document.getElementById('mp-driver').value, type: document.getElementById('mp-type').value, managerAmount: parseFloat(document.getElementById('mp-amount').value)||0, accountantAmount: parseFloat(document.getElementById('mp-amount').value)||0 });
-            document.getElementById('manager-payment-form').reset(); saveState();
-        }
-        function addOwnerReimburseKeith(e) {
-            e.preventDefault();
-            state.ownerExpenses.push({ id: Date.now(), date: document.getElementById('mp-owner-date').value, ownerName: document.getElementById('mp-owner').value, item: document.getElementById('mp-owner-item').value.trim(), amount: parseFloat(document.getElementById('mp-owner-amount').value)||0, isPaidByJoyce: false });
-            document.getElementById('owner-reimburse-form').reset(); saveState();
-        }
-        function updateJoyceAmount(id, val) { const p = state.payments.find(item => item.id === id); if(p) { p.accountantAmount = parseFloat(val)||0; saveState(); } }
-        function toggleHorizontalPaid(key, isChecked) { state.ownerPayoutVerification[key] = isChecked ? 1 : 0; saveState(); }
-        
-        function updateSelectors() {
-            if(document.getElementById('maint-car')) document.getElementById('maint-car').innerHTML = state.cars.map(c => `<option value="${c.plate}">${c.plate}</option>`).join('');
-            if(document.getElementById('mp-driver')) document.getElementById('mp-driver').innerHTML = state.drivers.map(d => `<option value="${d.name}">${d.name}</option>`).join('');
-            const uOwners = [...new Set(state.cars.map(c => c.owner))];
-            if(document.getElementById('mp-owner')) document.getElementById('mp-owner').innerHTML = uOwners.map(o => `<option value="${o}">${o}</option>`).join('');
-        }
-
-        function openCalendarDayModal(dateStr) {
-            document.getElementById('calendar-day-modal').classList.remove('hidden');
-            document.getElementById('modal-date-title').innerText = dateStr;
-            const isDayWeather = state.weather[dateStr]?.Day; const isNightWeather = state.weather[dateStr]?.Night;
-            if(isDayWeather || isNightWeather) { document.getElementById('modal-weather-alert').classList.remove('hidden'); } else { document.getElementById('modal-weather-alert').classList.add('hidden'); }
-
-            const tbody = document.getElementById('modal-schedule-tbody');
-            tbody.innerHTML = state.cars.map(c => {
-                const day = state.shifts.find(s => s.date === dateStr && s.carPlate === c.plate && s.type === 'Day');
-                const night = state.shifts.find(s => s.date === dateStr && s.carPlate === c.plate && s.type === 'Night');
-                return `<tr><td class="p-2 border font-mono font-bold">${c.plate}</td><td class="p-2 border bg-amber-50/40">${day ? day.driverName : '<span class="text-red-600 font-bold">[空置]</span>'}</td><td class="p-2 border bg-indigo-50/30">${night ? night.driverName : '<span class="text-red-600 font-bold">[空置]</span>'}</td></tr>`;
-            }).join('');
-        }
-        function closeCalendarModal() { document.getElementById('calendar-day-modal').classList.add('hidden'); }
-
-        function generateDebtReport() {
-            const outputArea = document.getElementById('debt-report-output'); if(!outputArea) return;
-            outputArea.classList.remove('hidden');
-
-            let report = `=== 香港的士租賃 財務與欠款摘要報告 ===\n`;
-            report += `產生時間: 2026-06-18\n`;
-            report += `-------------------------------------------\n\n`;
-
-            let overallExpectedRent = 0; let overallTunnelFees = 0; let overallCollected = 0;
-
-            state.drivers.forEach(d => {
-                let driverTotalRent = 0;
-                const dShifts = state.shifts.filter(s => s.driverName === d.name);
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = '';
+            
+            document.getElementById('calendar-month-title').innerText = `${currentYear}年 ${String(currentMonth + 1).padStart(2, '0')}月`;
+            
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+            
+            // 空白格填充
+            for (let i = 0; i < firstDay; i++) {
+                const empty = document.createElement('div');
+                empty.className = "bg-gray-50/50 min-h-[85px] border-b border-r border-gray-200";
+                grid.appendChild(empty);
+            }
+            
+            // 天數格子生成
+            for (let day = 1; day <= totalDays; day++) {
+                const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const sched = sysState.schedule[dateStr];
                 
-                dShifts.forEach(s => {
-                    const dateStr = s.date; const carPlate = s.carPlate;
-                    const isBigMaint = state.maintenances.some(m => m.plate === carPlate && m.date === dateStr && m.type === "大驗" && !m.isDone);
-                    const isSmallMaint = state.maintenances.some(m => m.plate === carPlate && m.date === dateStr && m.type === "小驗" && !m.isDone);
-                    const isWeatherExempt = state.weather[dateStr]?.[s.type];
-
-                    if (isBigMaint || isWeatherExempt) { driverTotalRent += 0; } 
-                    else if (isSmallMaint) { driverTotalRent += Math.round(d.rate / 2); } 
-                    else { driverTotalRent += d.rate; }
-                });
-
-                let driverTotalTunnel = 0; state.tunnels.filter(t => t.assignedDriver === d.name).forEach(t => { driverTotalTunnel += t.fee; });
-                let driverPaid = 0; state.payments.filter(p => p.driverName === d.name).forEach(p => { driverPaid += p.accountantAmount; });
-
-                let expectedTotal = driverTotalRent + driverTotalTunnel; let balance = expectedTotal - driverPaid;
-                overallExpectedRent += driverTotalRent; overallTunnelFees += driverTotalTunnel; overallCollected += driverPaid;
-
-                if (balance > 0) {
-                    report += `👤 司機: ${d.name} (${d.phone})\n`;
-                    report += `   - 應付車租: $${driverTotalRent} | 應付隧道費: $${driverTotalTunnel}\n`;
-                    report += `   - 實際已交: $${driverPaid}\n`;
-                    report += `   ⚠️ 目前累計欠款額: $${balance}\n`;
-                    report += `-------------------------------------------\n`;
-                }
-            });
-
-            report += `\n📊 [全隊整體財務概覽]\n`;
-            report += `- 全期應收總車租: $${overallExpectedRent.toLocaleString()}\n`;
-            report += `- 全期應收隧道費: $${overallTunnelFees.toLocaleString()}\n`;
-            report += `- 綜合已收總金額 (Joyce核銷數): $${overallCollected.toLocaleString()}\n`;
-            report += `- 車隊剩餘未收回欠款總額: $${(overallExpectedRent + overallTunnelFees - overallCollected).toLocaleString()}\n`;
-            report += `\n===========================================`;
-            outputArea.value = report;
-        }
-
-        function renderAll() {
-            const todayObj = new Date(TODAY_STR);
-            if(document.getElementById('stat-cars')) document.getElementById('stat-cars').innerText = `${state.cars.length} 輛`;
-
-            let awaitingCount = 0; let overdueCount = 0;
-            const mTbody = document.getElementById('maint-table-body');
-            if(mTbody) {
-                mTbody.innerHTML = state.maintenances.map(m => {
-                    const isDone = m.isDone; const isPastDeadline = new Date(m.date) < todayObj;
-                    if(!isDone) { awaitingCount++; if(isPastDeadline) overdueCount++; }
-                    return `<tr class="${(!isDone && isPastDeadline)?'status-expired':''} border-b text-xs hover:bg-gray-50">
-                        <td class="p-3"><input type="checkbox" ${m.isDone?'checked':''} onchange="toggleMaintStatus(${m.id}, this.checked)" class="w-4 h-4 text-red-600"></td>
-                        <td class="p-3 font-mono">${m.date}</td><td class="p-3 font-bold">${m.plate}</td><td class="p-3"><span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded">${m.type}</span></td><td class="p-3 font-semibold text-gray-900">$${m.cost}</td>
-                        <td class="p-3 text-gray-600 italic">${m.remark || '無'}</td>
-                        <td class="p-3"><button type="button" onclick="removeMaint(${m.id})" class="text-red-500 font-medium hover:underline">刪除</button></td></tr>`;
-                }).join('');
-            }
-            if(document.getElementById('stat-maint-awaiting')) document.getElementById('stat-maint-awaiting').innerText = `${awaitingCount} 項`;
-            if(document.getElementById('stat-maint-overdue')) document.getElementById('stat-maint-overdue').innerText = `${overdueCount} 項`;
-
-            const fTbody = document.getElementById('fleet-table-body');
-            if(fTbody) {
-                fTbody.innerHTML = state.cars.map(c => `
-                    <tr class="text-xs border-b hover:bg-gray-50/50">
-                        <td class="p-4 font-mono font-bold text-gray-900">${c.plate}</td>
-                        <td class="p-4 font-bold text-blue-600 cursor-pointer underline hover:text-blue-800" onclick="openOwnerDetail('${c.owner}', '${c.phone}', '${c.remark}')">👤 ${c.owner}</td>
-                        <td class="p-4 font-mono text-gray-600">${c.startDate || '未設定'}</td><td class="p-4 font-bold text-gray-900">$${c.cost}</td><td class="p-4 text-red-600 font-bold">$${c.deposit}</td>
-                        <td class="p-4"><button type="button" onclick="removeCar(${c.id})" class="text-gray-400 hover:text-red-500">移除</button></td></tr>`).join('');
-            }
-
-            const dTbody = document.getElementById('driver-table-body');
-            if(dTbody) {
-                dTbody.innerHTML = state.drivers.map(d => `
-                    <tr class="text-xs border-b hover:bg-gray-50">
-                        <td class="p-3 font-bold text-red-600 cursor-pointer underline hover:text-red-800" onclick="openDriverDetail(${d.id}, '${d.name}')">👤 ${d.name}</td>
-                        <td class="p-3 font-medium text-slate-600">${d.carType || '四仔'}</td><td class="p-3 font-mono">${d.hkid || '-'}</td><td class="p-3 font-mono">${d.phone || '-'}</td>
-                        <td class="p-3"><span class="bg-gray-100 px-2 py-0.5 rounded font-medium">${d.shiftPref || '未設定'}</span></td>
-                        <td class="p-3 font-semibold text-gray-900">$${d.rate}</td><td class="p-3">${d.freqDays==="1"?"每日繳":"每星期"}</td>
-                        <td class="p-3"><button type="button" onclick="removeDriver(${d.id})" class="text-gray-400 hover:text-red-500">移除</button></td></tr>`).join('');
-            }
-            if(document.getElementById('stat-drivers-count')) document.getElementById('stat-drivers-count').innerText = `${state.drivers.length} 人`;
-
-            const tLog = document.getElementById('tunnel-log-body');
-            if(tLog) tLog.innerHTML = state.tunnels.map(t => `<tr class="text-xs border-b"><td class="p-2 font-mono">${t.timestamp}</td><td class="p-2 font-bold">${t.plate}</td><td class="p-2 text-red-600">$${t.fee}</td><td class="p-2 font-bold bg-red-50 text-red-700">${t.assignedDriver}</td></tr>`).join('');
-
-            const aTbody = document.getElementById('accounting-table-body');
-            if(aTbody) {
-                aTbody.innerHTML = state.payments.map(p => {
-                    const diff = p.managerAmount - p.accountantAmount;
-                    let typeZH = p.type === "Rent" ? "租金" : (p.type === "Tunnel" ? "隧道費" : (p.type === "Maintenance" ? "維修費" : "按金"));
-                    return `<tr class="text-xs border-b hover:bg-gray-50">
-                        <td class="p-3 border font-mono truncate">${p.date}</td><td class="p-3 border font-bold text-gray-900 truncate">${p.driverName}</td>
-                        <td class="p-3 border truncate"><span class="bg-gray-100 px-2 py-0.5 rounded text-gray-600">${typeZH}</span></td><td class="p-3 border font-bold text-gray-700 truncate">$${p.managerAmount}</td>
-                        <td class="p-3 border"><input type="number" value="${p.accountantAmount}" onchange="updateJoyceAmount(${p.id}, this.value)" class="border rounded px-2 py-1 w-full text-emerald-600 font-bold bg-white"></td>
-                        <td class="p-3 border font-bold ${diff!==0?'text-red-600':'text-emerald-600'} truncate">$${diff}</td></tr>`;
-                }).join('');
-            }
-
-            let totalReceived30Days = 0; state.payments.forEach(p => { totalReceived30Days += p.accountantAmount; });
-            document.getElementById('stat-30day-received').innerText = `$${totalReceived30Days.toLocaleString()}`;
-
-            let totalPaid30Days = 0; state.maintenances.forEach(m => { totalPaid30Days += m.cost; }); state.ownerExpenses.forEach(e => { totalPaid30Days += e.amount; });
-            document.getElementById('stat-30day-paid').innerText = `$${totalPaid30Days.toLocaleString()}`;
-
-            renderJoyceHorizontalChart();
-            renderDashboardCalendar();
-        }
-
-        function renderDashboardCalendar() {
-            const grid = document.getElementById('dashboard-calendar-grid'); if(!grid) return;
-            let daysHTML = ""; const totalCars = state.cars.length;
-
-            for(let d=1; d<=30; d++) {
-                const dateStr = `2026-06-${d < 10 ? '0'+d : d}`;
-                const isWeatherDay = state.weather[dateStr]?.Day; const isWeatherNight = state.weather[dateStr]?.Night;
-
-                let vacantShiftsCount = 0;
-                state.cars.forEach(c => {
-                    if(!state.shifts.some(s => s.date === dateStr && s.carPlate === c.plate && s.type === 'Day')) vacantShiftsCount++;
-                    if(!state.shifts.some(s => s.date === dateStr && s.carPlate === c.plate && s.type === 'Night')) vacantShiftsCount++;
-                });
-
-                let bgColor = "bg-green-500 text-white";
-                if(isWeatherDay || isWeatherNight) { bgColor = "bg-gray-400 text-white"; } 
-                else if(totalCars === 0) { bgColor = "bg-gray-100 text-gray-400"; } 
-                else if(vacantShiftsCount > 6) { bgColor = "bg-red-500 text-white"; } 
-                else if(vacantShiftsCount > 0) { bgColor = "bg-yellow-400 text-gray-900"; }
-
-                daysHTML += `<div onclick="openCalendarDayModal('${dateStr}')" class="${bgColor} p-3 rounded-lg cal-day cursor-pointer shadow-sm hover:opacity-80 flex flex-col justify-between">
-                    <span class="block text-left font-mono">${d}日</span>
-                    <span class="text-[9px] block text-right font-normal">${(isWeatherDay||isWeatherNight)?'颱風停駛':(vacantShiftsCount===0?'滿更':`缺 ${Math.ceil(vacantShiftsCount/2)}車`)}</span></div>`;
-            }
-            grid.innerHTML = daysHTML;
-        }
-
-        function renderJoyceHorizontalChart() {
-            const tbody = document.getElementById('owner-horizontal-tbody'); if(!tbody) return;
-            if(state.cars.length === 0) { tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-gray-400 italic">暫無數據。</td></tr>`; return; }
-
-            const ownerMap = {};
-            state.cars.forEach(car => { if(!ownerMap[car.owner]) ownerMap[car.owner] = []; ownerMap[car.owner].push(car); });
-
-            let html = "";
-            Object.keys(ownerMap).forEach(ownerName => {
-                const carsList = ownerMap[ownerName];
-                let baseRentPerNode = 0; carsList.forEach(c => { baseRentPerNode += Math.round(c.cost / 3); });
-
-                let maintDeduction = 0;
-                state.maintenances.forEach(m => {
-                    const matchedCar = carsList.find(c => c.plate === m.plate);
-                    if(matchedCar && !m.isDone) {
-                        if (m.type === "大驗") { maintDeduction += Math.round(matchedCar.cost / 30); } 
-                        else if (m.type === "小驗") { maintDeduction += Math.round((matchedCar.cost / 30) / 2); }
+                let driverName = "❌ 尚未指派";
+                let rentAmount = 850;
+                let textClass = "text-gray-400 italic text-[11px]";
+                
+                if (sched) {
+                    const drv = sysState.drivers.find(d => d.id === sched.driverId);
+                    if (drv) {
+                        driverName = drv.name;
+                        textClass = "text-red-600 font-bold text-xs";
                     }
-                });
-
-                let weatherDeduction = 0;
-                Object.keys(state.weather).forEach(dateStr => {
-                    const dayW = state.weather[dateStr]?.Day; const nightW = state.weather[dateStr]?.Night;
-                    carsList.forEach(c => {
-                        const singleShiftRent = Math.round((c.cost / 30) / 2);
-                        if(dayW) weatherDeduction += singleShiftRent;
-                        if(nightW) weatherDeduction += singleShiftRent;
-                    });
-                });
-
-                let totalDeduction = maintDeduction + weatherDeduction;
-                let pieceDeduct = Math.round(totalDeduction / 3);
-
-                let total10 = Math.max(0, baseRentPerNode - pieceDeduct);
-                let total20 = Math.max(0, baseRentPerNode - pieceDeduct);
-                let total30 = Math.max(0, baseRentPerNode - pieceDeduct);
-
-                const key10 = `${ownerName}-10`; const key20 = `${ownerName}-20`; const key30 = `${ownerName}-30`;
-                const paid10 = state.ownerPayoutVerification[key10] ? true : false;
-                const paid20 = state.ownerPayoutVerification[key20] ? true : false;
-                const paid30 = state.ownerPayoutVerification[key30] ? true : false;
-
-                html += `
-                    <tr class="hover:bg-gray-50 border-b">
-                        <td class="p-4 border font-bold text-gray-900 sticky left-0 bg-white z-10 shadow-sm">👤 ${ownerName}</td>
-                        <td class="p-4 border text-center font-bold text-blue-600 font-mono">${carsList.length} 輛車</td>
-                        <td class="p-4 border text-center font-mono font-bold text-gray-700 bg-gray-50/50">$${total10.toLocaleString()}</td>
-                        <td class="p-4 border text-center bg-gray-50/50">
-                            <label class="inline-flex items-center gap-1.5"><input type="checkbox" ${paid10?'checked':''} onchange="toggleHorizontalPaid('${key10}', this.checked)" class="w-4 h-4 text-red-600 rounded"> <span class="text-[11px] font-medium ${paid10?'text-emerald-600 font-bold':'text-gray-400'}">${paid10?'已付':'未付'}</span></label>
-                        </td>
-                        <td class="p-4 border text-center font-mono font-bold text-gray-700 bg-red-50/10">$${total20.toLocaleString()}</td>
-                        <td class="p-4 border text-center bg-red-50/10">
-                            <label class="inline-flex items-center gap-1.5"><input type="checkbox" ${paid20?'checked':''} onchange="toggleHorizontalPaid('${key20}', this.checked)" class="w-4 h-4 text-red-600 rounded"> <span class="text-[11px] font-medium ${paid20?'text-emerald-600 font-bold':'text-gray-400'}">${paid20?'已付':'未付'}</span></label>
-                        </td>
-                        <td class="p-4 border text-center font-mono font-bold text-gray-700 bg-gray-50/50">$${total30.toLocaleString()}</td>
-                        <td class="p-4 border text-center bg-gray-50/50">
-                            <label class="inline-flex items-center gap-1.5"><input type="checkbox" ${paid30?'checked':''} onchange="toggleHorizontalPaid('${key30}', this.checked)" class="w-4 h-4 text-red-600 rounded"> <span class="text-[11px] font-medium ${paid30?'text-emerald-600 font-bold':'text-gray-400'}">${paid30?'已付':'未付'}</span></label>
-                        </td>
-                    </tr>`;
-            });
-            tbody.innerHTML = html;
+                    rentAmount = sched.rent;
+                }
+                
+                const dayBox = document.createElement('div');
+                dayBox.className = "bg-white min-h-[85px] p-2 border-b border-r border-gray-200 flex flex-col justify-between hover:bg-red-50/20 cursor-pointer transition-all";
+                dayBox.onclick = () => openDayModal(dateStr, rentAmount, sched ? sched.driverId : '');
+                
+                dayBox.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="font-mono font-bold text-gray-700">${day}</span>
+                        <span class="text-[10px] font-mono font-semibold text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">$${rentAmount}</span>
+                    </div>
+                    <div class="mt-2 py-1 px-1.5 rounded bg-gray-50 border border-gray-100 truncate ${textClass} text-center">
+                        ${driverName}
+                    </div>
+                `;
+                grid.appendChild(dayBox);
+            }
         }
 
-        // ==========================================
-        // 🔄 雙機即時自動化觸發器 (Live-Update Hooks)
-        // ==========================================
-        function setupLiveUpdateTriggers() {
-            // 1️⃣ Polling 心跳迴圈：每隔 30 秒自動向雲端同步拉取最新變更
-            _syncHeartbeatInterval = setInterval(() => {
-                fetchFromCloud();
-            }, 30000);
+        function renderLedger() {
+            const tbody = document.getElementById('ledger-table-body');
+            tbody.innerHTML = '';
+            
+            for (let m = 0; m < 12; m++) {
+                const monthName = `2026年 ${String(m+1).padStart(2, '0')}月`;
+                const key20 = `2026-${String(m+1).padStart(2, '0')}-20`;
+                const key30 = `2026-${String(m+1).padStart(2, '0')}-30`;
+                
+                let total20 = 0;
+                let total30 = 0;
+                
+                for (let d = 1; d <= 31; d++) {
+                    const dateStr = `2026-${String(m+1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                    if (d <= 15 && sysState.schedule[dateStr]) total20 += Number(sysState.schedule[dateStr].rent || 0);
+                    if (d >= 16 && sysState.schedule[dateStr]) total30 += Number(sysState.schedule[dateStr].rent || 0);
+                }
+                
+                const paid20 = sysState.ledgerPaid[key20] || false;
+                const paid30 = sysState.ledgerPaid[key30] || false;
+                
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50/50 transition-colors";
+                tr.innerHTML = `
+                    <td class="p-4 font-bold text-gray-900">${monthName}</td>
+                    <td class="p-4 border text-center font-mono font-bold text-gray-700 bg-red-50/10">$${total20.toLocaleString()}</td>
+                    <td class="p-4 border text-center bg-red-50/10">
+                        <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" ${paid20?'checked':''} onchange="toggleLedgerPaid('${key20}', this.checked)" class="w-4 h-4 text-red-600 rounded border-gray-300"> 
+                            <span class="text-xs font-bold ${paid20?'text-emerald-600':'text-red-500'}">${paid20?'已清付':'未收到'}</span>
+                        </label>
+                    </td>
+                    <td class="p-4 border text-center font-mono font-bold text-gray-700 bg-gray-50/50">$${total30.toLocaleString()}</td>
+                    <td class="p-4 border text-center bg-gray-50/50">
+                        <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" ${paid30?'checked':''} onchange="toggleLedgerPaid('${key30}', this.checked)" class="w-4 h-4 text-red-600 rounded border-gray-300"> 
+                            <span class="text-xs font-bold ${paid30?'text-emerald-600':'text-red-500'}">${paid30?'已清付':'未收到'}</span>
+                        </label>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            }
+        }
 
-            // 2️⃣ 視窗焦點與可見性改變觸發器：只要 Keith 或 Joyce 切換分頁或點回視窗，立即執行精準同步
-            window.addEventListener('focus', () => {
-                fetchFromCloud();
+        function toggleLedgerPaid(key, checked) {
+            sysState.ledgerPaid[key] = checked;
+            saveAndSync();
+        }
+
+        function renderDrivers() {
+            const tbody = document.getElementById('driver-table-body');
+            tbody.innerHTML = '';
+            
+            if (sysState.drivers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-400 italic">目前尚未建立任何司機檔案。</td></tr>`;
+                return;
+            }
+            
+            sysState.drivers.forEach(d => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50/50 transition-colors";
+                tr.innerHTML = `
+                    <td class="p-4 font-bold text-gray-900">${d.name}</td>
+                    <td class="p-4 text-gray-600 font-mono">${d.phone || '-'}</td>
+                    <td class="p-4"><span class="px-2 py-1 bg-gray-100 rounded font-mono font-bold text-gray-700 border">${d.car || '-'}</span></td>
+                    <td class="p-4 font-mono font-semibold text-blue-600">$${Number(d.deposit || 0).toLocaleString()}</td>
+                    <td class="p-4">${d.status === 'active' ? '<span class="text-xs font-bold px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">🟢 執業中</span>' : '<span class="text-xs font-bold px-2 py-0.5 bg-gray-100 text-gray-400 rounded-full">🔴 已解約</span>'}</td>
+                    <td class="p-4 text-right space-x-2">
+                        <button onclick="openDriverDriverEdit('${d.id}')" class="text-xs font-bold text-blue-600 hover:underline">修改</button>
+                        <button onclick="deleteDriver('${d.id}')" class="text-xs font-bold text-red-600 hover:underline">刪除</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
             });
-            document.addEventListener('visibilitychange', () => {
-                if (document.visibilityState === 'visible') {
-                    fetchFromCloud();
+        }
+
+        // 司機表單操作細節
+        function openDriverModal() {
+            document.getElementById('driver-modal-title').innerText = "新增司機檔案";
+            document.getElementById('driver-edit-id').value = '';
+            document.getElementById('driver-name').value = '';
+            document.getElementById('driver-phone').value = '';
+            document.getElementById('driver-car').value = '';
+            document.getElementById('driver-deposit').value = '0';
+            document.getElementById('driver-status').value = 'active';
+            document.getElementById('driver-modal').classList.remove('hidden');
+        }
+
+        function openDriverDriverEdit(id) {
+            const d = sysState.drivers.find(drv => drv.id === id);
+            if (!d) return;
+            document.getElementById('driver-modal-title').innerText = "修改司機檔案";
+            document.getElementById('driver-edit-id').value = d.id;
+            document.getElementById('driver-name').value = d.name;
+            document.getElementById('driver-phone').value = d.phone || '';
+            document.getElementById('driver-car').value = d.car || '';
+            document.getElementById('driver-deposit').value = d.deposit || 0;
+            document.getElementById('driver-status').value = d.status || 'active';
+            document.getElementById('driver-modal').classList.remove('hidden');
+        }
+
+        function closeDriverModal() {
+            document.getElementById('driver-modal').classList.add('hidden');
+        }
+
+        function saveDriverForm() {
+            const id = document.getElementById('driver-edit-id').value;
+            const name = document.getElementById('driver-name').value.trim();
+            const phone = document.getElementById('driver-phone').value.trim();
+            const car = document.getElementById('driver-car').value.trim().toUpperCase();
+            const deposit = Number(document.getElementById('driver-deposit').value || 0);
+            const status = document.getElementById('driver-status').value;
+            
+            if (!name) { alert("請填寫司機姓名！"); return; }
+            
+            if (id) {
+                // 修改存在檔案
+                const d = sysState.drivers.find(drv => drv.id === id);
+                if (d) {
+                    d.name = name; d.phone = phone; d.car = car; d.deposit = deposit; d.status = status;
+                }
+            } else {
+                // 建立新檔案
+                sysState.drivers.push({
+                    id: 'drv_' + Date.now(),
+                    name, phone, car, deposit, status
+                });
+            }
+            
+            closeDriverModal();
+            saveAndSync();
+        }
+
+        function deleteDriver(id) {
+            if (confirm("⚠️ 確定要刪除此司機檔案嗎？這不會清除日曆上的歷史排班紀錄，但會移除檔案。")) {
+                sysState.drivers = sysState.drivers.filter(d => d.id !== id);
+                saveAndSync();
+            }
+        }
+
+        // 月份切換
+        function changeMonth(dir) {
+            currentMonth += dir;
+            if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+            if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+            renderCalendar();
+        }
+
+        // 日曆單日調配視窗操作
+        function openDayModal(dateStr, currentRent, currentDriverId) {
+            document.getElementById('day-modal-date').value = dateStr;
+            document.getElementById('day-modal-subtitle').innerText = `指定日期：${dateStr}`;
+            document.getElementById('day-rent-input').value = currentRent || 850;
+            
+            const select = document.getElementById('day-driver-select');
+            select.innerHTML = '<option value="">-- 空置 / 休息不指派 --</option>';
+            
+            sysState.drivers.forEach(d => {
+                if (d.status === 'active' || d.id === currentDriverId) {
+                    const opt = document.createElement('option');
+                    opt.value = d.id;
+                    opt.innerText = `${d.name} (${d.car || '無車牌'})`;
+                    if (d.id === currentDriverId) opt.selected = true;
+                    select.appendChild(opt);
                 }
             });
+            
+            document.getElementById('day-modal').classList.remove('hidden');
         }
 
-        window.onload = () => { 
-            hydrateState(); 
-            updateSelectors(); 
-            renderAll(); 
-            updateSyncBadge();
-            setupLiveUpdateTriggers();
-            switchTab('dashboard'); 
+        function closeDayModal() {
+            document.getElementById('day-modal').classList.add('hidden');
+        }
+
+        function saveDaySettings() {
+            const dateStr = document.getElementById('day-modal-date').value;
+            const driverId = document.getElementById('day-driver-select').value;
+            const rent = Number(document.getElementById('day-rent-input').value || 850);
             
-            // 首次啟動如果已有 URL 則自動抓取一次
-            if (GOOGLE_SCRIPT_URL) {
-                fetchFromCloud();
+            if (!driverId) {
+                delete sysState.schedule[dateStr];
+            } else {
+                sysState.schedule[dateStr] = { driverId, rent };
             }
-        };
+            
+            closeDayModal();
+            saveAndSync();
+        }
     </script>
 </body>
 </html>
-}
